@@ -14,6 +14,8 @@
 
 import os
 
+from google.appengine.ext import db
+
 import webapp2
 import jinja2
 
@@ -44,6 +46,12 @@ class BlogHandler(webapp2.RequestHandler):
         self.response.write('Hello, Blog!')
 
 
+class BlogPost(db.Model):
+    subject = db.StringProperty(required=True)
+    blog = db.TextProperty(required=True)
+    created = db.DateTimeProperty(auto_now_add=True)
+
+
 class NewPostHandler(Handler):
     def render_post(self, subject="", blog="", error=""):
         self.render("new_post.html", subject=subject, blog=blog, error=error)
@@ -56,7 +64,9 @@ class NewPostHandler(Handler):
         blog = self.request.get("blog")
 
         if subject and blog:
-            # TODO: Post and then redirect
+            blog_post = BlogPost(subject=subject, blog=blog)
+            blog_post.put()
+
             self.redirect("/blog")
         else:
             error = "subject and content, please!"
