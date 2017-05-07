@@ -12,7 +12,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
 import webapp2
+import jinja2
+
+template_dir = os.path.join(os.path.dirname(__file__), 'templates')
+jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
+                               autoescape=True)
+
+
+class Handler(webapp2.RequestHandler):
+    """
+    Base class for other Handlers we write. Handler takes care
+    of rendering HTML from templates and writing them in the response.
+    """
+    def write(self, *a, **kw):
+        self.response.out.write(*a, **kw)
+
+    def render_str(self, template, **params):
+        t = jinja_env.get_template(template)
+        return t.render(params)
+
+    def render(self, template, **kw):
+        self.write(self.render_str(template, **kw))
 
 
 class BlogHandler(webapp2.RequestHandler):
@@ -21,10 +44,9 @@ class BlogHandler(webapp2.RequestHandler):
         self.response.write('Hello, Blog!')
 
 
-class NewPostHandler(webapp2.RequestHandler):
+class NewPostHandler(Handler):
     def get(self):
-        self.response.headers['Content-Type'] = 'text/plain'
-        self.response.write('Hello, NewPost!')
+        self.render("new_post.html")
 
 
 app = webapp2.WSGIApplication([
