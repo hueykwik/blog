@@ -67,7 +67,7 @@ class NewPostHandler(Handler):
             blog_post = BlogPost(subject=subject, blog=blog)
             blog_post.put()
 
-            self.redirect("/blog")
+            self.redirect("/blog/%d" % blog_post.key().id())
         else:
             error = "subject and content, please!"
             self.render_post(subject, blog, error)
