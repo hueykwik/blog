@@ -8,11 +8,11 @@
   <h2>new post</h2>
   <form method="post">
     <p>subject</p>
-    <input type="text" name="subject">
+    <input type="text" name="subject" value={{subject}}>
     <br>
 
     <p>blog</p>
-    <textarea name="blog"></textarea>
+    <textarea name="blog">{{blog}}</textarea>
     <br>
 
     {% if error %}

@@ -45,8 +45,11 @@ class BlogHandler(webapp2.RequestHandler):
 
 
 class NewPostHandler(Handler):
+    def render_post(self, subject="", blog="", error=""):
+        self.render("new_post.html", subject=subject, blog=blog, error=error)
+
     def get(self):
-        self.render("new_post.html")
+        self.render_post()
 
     def post(self):
         subject = self.request.get("subject")
@@ -56,8 +59,8 @@ class NewPostHandler(Handler):
             # TODO: Post and then redirect
             self.redirect("/blog")
         else:
-            self.render("new_post.html", error="subject and content, please!")
-
+            error = "subject and content, please!"
+            self.render_post(subject, blog, error)
 
 app = webapp2.WSGIApplication([
     ('/blog', BlogHandler),
