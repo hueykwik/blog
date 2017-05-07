@@ -15,6 +15,10 @@
     <textarea name="blog"></textarea>
     <br>
 
+    {% if error %}
+    <p class="error">{{error}}</p>
+    {% endif %}
+
     <input type="submit"></input>
   </form>
 
