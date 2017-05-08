@@ -75,7 +75,9 @@ class NewPostHandler(Handler):
 
 class ViewPostHandler(Handler):
     def get(self, post_id):
-        self.response.write('This is the ViewPostHandler. The post id is %s' % post_id)
+        blog_post = BlogPost.get_by_id(int(post_id))
+
+        self.render("view_post.html", subject=blog_post.subject, blog=blog_post.blog)
 
 app = webapp2.WSGIApplication([
     ('/blog', BlogHandler),
