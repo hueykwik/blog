@@ -72,7 +72,13 @@ class NewPostHandler(Handler):
             error = "subject and content, please!"
             self.render_post(subject, blog, error)
 
+
+class ViewPostHandler(Handler):
+    def get(self, post_id):
+        self.response.write('This is the ViewPostHandler. The post id is %s' % post_id)
+
 app = webapp2.WSGIApplication([
     ('/blog', BlogHandler),
-    ('/newpost', NewPostHandler)
+    ('/newpost', NewPostHandler),
+    (r'/blog/(\d+)', ViewPostHandler),
 ], debug=True)
