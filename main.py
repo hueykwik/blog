@@ -40,10 +40,12 @@ class Handler(webapp2.RequestHandler):
         self.write(self.render_str(template, **kw))
 
 
-class BlogHandler(webapp2.RequestHandler):
+class BlogHandler(Handler):
     def get(self):
-        self.response.headers['Content-Type'] = 'text/plain'
-        self.response.write('Hello, Blog!')
+        blog_posts = db.GqlQuery("SELECT * FROM BlogPost "
+                                 "ORDER BY created DESC ")
+
+        self.render("index.html", blog_posts=blog_posts)
 
 
 class BlogPost(db.Model):
