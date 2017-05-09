@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+import re
 
 from google.appengine.ext import db
 
@@ -81,8 +82,81 @@ class ViewPostHandler(Handler):
 
         self.render("view_post.html", subject=blog_post.subject, blog=blog_post.blog, created=blog_post.created)
 
+
+USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
+PASSWORD_RE = re.compile(r"^.{3,20}$")
+EMAIL_RE = re.compile(r"^[\S]+@[\S]+.[\S]+$")
+
+
+class SignupHandler(Handler):
+    """
+    Handles user signup requests.
+    """
+    def valid_username(self, username):
+        return USER_RE.match(username)
+
+    def username_error(self, username):
+        return None if username else "That's not a valid username."
+
+    def valid_password(self, password):
+        return PASSWORD_RE.match(password)
+
+    def password_error(self, password):
+        return None if password else "That wasn't a valid password."
+
+    def verify_error(self, password, passwords_match):
+        if self.valid_password(password) and not passwords_match:
+            return "Your passwords didn't match."
+
+    def valid_email(self, email):
+        return EMAIL_RE.match(email)
+
+    def email_error(self, email):
+        return None if email else "That's not a valid email."
+
+    def get(self):
+        self.render('signup.html')
+
+    def post(self):
+        user_username = self.request.get('username')
+        user_password = self.request.get('password')
+        user_verify = self.request.get('verify')
+        user_email = self.request.get('email')
+
+        username = self.valid_username(user_username)
+        password = self.valid_password(user_password)
+        verify = self.valid_password(user_verify)
+        email = self.valid_email(user_email) or (not user_email)
+
+        passwords_match = (user_password == user_verify)
+
+        if (username and password and verify and passwords_match and email):
+            self.redirect("/welcome?username=%s" % user_username)
+        else:
+            self.render('signup.html',
+                        username=user_username,
+                        username_error=self.username_error(username),
+                        password_error=self.password_error(password),
+                        verify_error=self.verify_error(user_password, passwords_match),
+                        email=user_email,
+                        email_error=self.email_error(email))
+
+
+class WelcomeHandler(Handler):
+    """
+    Welcomes the new user.
+    """
+    def get(self):
+        username = self.request.get('username')
+
+        if username:
+            self.render('welcome.html', username=username)
+        else:
+            self.redirect("/signup")
+
 app = webapp2.WSGIApplication([
     ('/blog', BlogHandler),
-    ('/newpost', NewPostHandler),
+    ('/blog/newpost', NewPostHandler),
     (r'/blog/(\d+)', ViewPostHandler),
+    ('/signup', SignupHandler)
 ], debug=True)
