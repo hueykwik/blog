@@ -163,11 +163,12 @@ class SignupHandler(Handler):
             self.render('signup.html', **params)
         else:
             # create a user
-            user = model.User(username=username, password=password)
+            hash_password = make_pw_hash(username, password)
+
+            user = model.User(username=username, password=hash_password)
             user.put()
             # set cookie
             self.redirect("/welcome?username=%s" % username)
-
 
 
 class WelcomeHandler(Handler):
