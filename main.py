@@ -20,6 +20,8 @@ from google.appengine.ext import db
 import webapp2
 import jinja2
 
+import model
+
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
                                autoescape=True)
@@ -53,16 +55,6 @@ class BlogHandler(Handler):
         self.render("front.html", blog_posts=blog_posts)
 
 
-class BlogPost(db.Model):
-    subject = db.StringProperty(required=True)
-    content = db.TextProperty(required=True)
-    created = db.DateTimeProperty(auto_now_add=True)
-
-    def render(self):
-        self._render_text = self.content.replace('\n', '<br>')
-        return render_str("post.html", p=self)
-
-
 class NewPostHandler(Handler):
     def render_post(self, subject="", content="", error=""):
         self.render("new_post.html", subject=subject, content=content, error=error)
@@ -75,7 +67,7 @@ class NewPostHandler(Handler):
         content = self.request.get("content")
 
         if subject and content:
-            blog_post = BlogPost(subject=subject, content=content)
+            blog_post = model.BlogPost(subject=subject, content=content)
             blog_post.put()
 
             self.redirect("/blog/%d" % blog_post.key().id())
@@ -86,7 +78,7 @@ class NewPostHandler(Handler):
 
 class ViewPostHandler(Handler):
     def get(self, post_id):
-        blog_post = BlogPost.get_by_id(int(post_id))
+        blog_post = model.BlogPost.get_by_id(int(post_id))
 
         self.render("view_post.html", post=blog_post)
 
@@ -94,12 +86,6 @@ class ViewPostHandler(Handler):
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
 PASSWORD_RE = re.compile(r"^.{3,20}$")
 EMAIL_RE = re.compile(r"^[\S]+@[\S]+.[\S]+$")
-
-
-class User(db.Model):
-    username = db.StringProperty(required=True)
-    password = db.StringProperty(required=True)
-    email = db.EmailProperty()
 
 
 class SignupHandler(Handler):
@@ -159,6 +145,8 @@ class SignupHandler(Handler):
         if (username and not username_exists and password and
                 verify and passwords_match and email):
             # create a user
+
+            # set cookie
             self.redirect("/welcome?username=%s" % user_username)
         else:
             self.render('signup.html',
