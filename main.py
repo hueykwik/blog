@@ -118,10 +118,9 @@ class SignupHandler(Handler):
         return USER_RE.match(username)
 
     def username_exists(self, username):
-        users = db.GqlQuery("SELECT * FROM User "
-                            "ORDER BY created DESC ")
+        users = db.GqlQuery("select * from User where username = '%s'" % username)
 
-        return users.get() is not None
+        return users.count(limit=1) != 0
 
     def valid_password(self, password):
         return PASSWORD_RE.match(password)
@@ -145,6 +144,9 @@ class SignupHandler(Handler):
         if not self.valid_username(username):
             params['username_error'] = "That's not a valid username."
             has_error = True
+        elif self.username_exists(username):
+            params['username_error'] = "That username already exists."
+            has_error = True
 
         if not self.valid_password(password):
             params['password_error'] = "That wasn't a valid password."
@@ -157,16 +159,12 @@ class SignupHandler(Handler):
             params['email_error'] = "That's not a valid email."
             has_error = True
 
-        # TODO: check username exists
-        #username_exists = self.username_exists(username)
-
         if has_error:
             self.render('signup.html', **params)
         else:
             # create a user
-            # user = model.User(username=user_username,
-            #                   password=make_pw_hash(user_username, ))
-            # user.put()
+            user = model.User(username=username, password=password)
+            user.put()
             # set cookie
             self.redirect("/welcome?username=%s" % username)
 
