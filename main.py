@@ -96,12 +96,24 @@ PASSWORD_RE = re.compile(r"^.{3,20}$")
 EMAIL_RE = re.compile(r"^[\S]+@[\S]+.[\S]+$")
 
 
+class User(db.Model):
+    username = db.StringProperty(required=True)
+    password = db.StringProperty(required=True)
+    email = db.EmailProperty()
+
+
 class SignupHandler(Handler):
     """
     Handles user signup requests.
     """
     def valid_username(self, username):
         return USER_RE.match(username)
+
+    def username_exists(self, username):
+        users = db.GqlQuery("SELECT * FROM User "
+                            "ORDER BY created DESC ")
+
+        return users.get() is not None
 
     def username_error(self, username, username_exists=False):
         if username_exists:
@@ -142,9 +154,10 @@ class SignupHandler(Handler):
         passwords_match = (user_password == user_verify)
 
         # TODO: check username exists
-        username_exists = False
+        username_exists = self.username_exists(username)
 
-        if (username and password and verify and passwords_match and email):
+        if (username and not username_exists and password and
+                verify and passwords_match and email):
             # create a user
             self.redirect("/welcome?username=%s" % user_username)
         else:
