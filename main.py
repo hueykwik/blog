@@ -15,6 +15,10 @@
 import os
 import re
 
+import random
+import string
+import hashlib
+
 from google.appengine.ext import db
 
 import webapp2
@@ -88,6 +92,24 @@ PASSWORD_RE = re.compile(r"^.{3,20}$")
 EMAIL_RE = re.compile(r"^[\S]+@[\S]+.[\S]+$")
 
 
+def make_salt():
+    return ''.join(random.choice(string.letters) for x in range(5))
+
+
+def make_pw_hash(name, pw, salt=None):
+    if not salt:
+        salt = make_salt()
+
+    h = hashlib.sha256(name + pw + salt).hexdigest()
+    return '%s|%s' % (h, salt)
+
+
+def valid_pw(name, pw, h):
+    hash_val, salt = h.split('|')
+
+    return make_pw_hash(name, pw, salt) == h
+
+
 class SignupHandler(Handler):
     """
     Handles user signup requests.
@@ -101,61 +123,53 @@ class SignupHandler(Handler):
 
         return users.get() is not None
 
-    def username_error(self, username, username_exists=False):
-        if username_exists:
-            return "Username already exists."
-
-        return None if username else "That's not a valid username."
-
     def valid_password(self, password):
         return PASSWORD_RE.match(password)
 
-    def password_error(self, password):
-        return None if password else "That wasn't a valid password."
-
-    def verify_error(self, password, passwords_match):
-        if self.valid_password(password) and not passwords_match:
-            return "Your passwords didn't match."
-
     def valid_email(self, email):
-        return EMAIL_RE.match(email)
-
-    def email_error(self, email):
-        return None if email else "That's not a valid email."
+        return not email or EMAIL_RE.match(email)
 
     def get(self):
         self.render('signup.html')
 
     def post(self):
-        user_username = self.request.get('username')
-        user_password = self.request.get('password')
-        user_verify = self.request.get('verify')
-        user_email = self.request.get('email')
+        has_error = False
 
-        username = self.valid_username(user_username)
-        password = self.valid_password(user_password)
-        verify = self.valid_password(user_verify)
-        email = self.valid_email(user_email) or (not user_email)
+        username = self.request.get('username')
+        password = self.request.get('password')
+        verify = self.request.get('verify')
+        email = self.request.get('email')
 
-        passwords_match = (user_password == user_verify)
+        params = dict(username=username, email=email)
+
+        if not self.valid_username(username):
+            params['username_error'] = "That's not a valid username."
+            has_error = True
+
+        if not self.valid_password(password):
+            params['password_error'] = "That wasn't a valid password."
+            has_error = True
+        elif password != verify:
+            params['verify_error'] = "Your passwords didn't match."
+            has_error = True
+
+        if not self.valid_email(email):
+            params['email_error'] = "That's not a valid email."
+            has_error = True
 
         # TODO: check username exists
-        username_exists = self.username_exists(username)
+        #username_exists = self.username_exists(username)
 
-        if (username and not username_exists and password and
-                verify and passwords_match and email):
-            # create a user
-
-            # set cookie
-            self.redirect("/welcome?username=%s" % user_username)
+        if has_error:
+            self.render('signup.html', **params)
         else:
-            self.render('signup.html',
-                        username=user_username,
-                        username_error=self.username_error(username, username_exists),
-                        password_error=self.password_error(password),
-                        verify_error=self.verify_error(user_password, passwords_match),
-                        email=user_email,
-                        email_error=self.email_error(email))
+            # create a user
+            # user = model.User(username=user_username,
+            #                   password=make_pw_hash(user_username, ))
+            # user.put()
+            # set cookie
+            self.redirect("/welcome?username=%s" % username)
+
 
 
 class WelcomeHandler(Handler):
