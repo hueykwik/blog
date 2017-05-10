@@ -103,7 +103,10 @@ class SignupHandler(Handler):
     def valid_username(self, username):
         return USER_RE.match(username)
 
-    def username_error(self, username):
+    def username_error(self, username, username_exists=False):
+        if username_exists:
+            return "Username already exists."
+
         return None if username else "That's not a valid username."
 
     def valid_password(self, password):
@@ -138,12 +141,16 @@ class SignupHandler(Handler):
 
         passwords_match = (user_password == user_verify)
 
+        # TODO: check username exists
+        username_exists = False
+
         if (username and password and verify and passwords_match and email):
+            # create a user
             self.redirect("/welcome?username=%s" % user_username)
         else:
             self.render('signup.html',
                         username=user_username,
-                        username_error=self.username_error(username),
+                        username_error=self.username_error(username, username_exists),
                         password_error=self.password_error(password),
                         verify_error=self.verify_error(user_password, passwords_match),
                         email=user_email,
@@ -166,5 +173,6 @@ app = webapp2.WSGIApplication([
     ('/blog/?', BlogHandler),
     ('/blog/newpost', NewPostHandler),
     (r'/blog/(\d+)', ViewPostHandler),
-    ('/signup', SignupHandler)
+    ('/signup', SignupHandler),
+    ('/welcome', WelcomeHandler)
 ], debug=True)
