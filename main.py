@@ -163,7 +163,7 @@ class WelcomeHandler(Handler):
             self.redirect("/signup")
 
 app = webapp2.WSGIApplication([
-    ('/blog', BlogHandler),
+    ('/blog/?', BlogHandler),
     ('/blog/newpost', NewPostHandler),
     (r'/blog/(\d+)', ViewPostHandler),
     ('/signup', SignupHandler)
