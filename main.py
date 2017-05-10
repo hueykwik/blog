@@ -50,7 +50,7 @@ class BlogHandler(Handler):
         blog_posts = db.GqlQuery("SELECT * FROM BlogPost "
                                  "ORDER BY created DESC ")
 
-        self.render("index.html", blog_posts=blog_posts)
+        self.render("front.html", blog_posts=blog_posts)
 
 
 class BlogPost(db.Model):
