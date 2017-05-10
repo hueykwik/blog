@@ -88,7 +88,7 @@ class ViewPostHandler(Handler):
     def get(self, post_id):
         blog_post = BlogPost.get_by_id(int(post_id))
 
-        self.render("view_post.html", subject=blog_post.subject, content=blog_post.content, created=blog_post.created)
+        self.render("view_post.html", post=blog_post)
 
 
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")

@@ -3,21 +3,8 @@
 {% block content %}
 
   {% for p in blog_posts %}
-  <div class="post">
-    <div class="post-heading">
-      <div class="post-title">
-        {{p.subject}}
-      </div>
-
-      <div class="post-date">
-        {{p.created.strftime("%b %d, %Y")}}
-      </div>
-    </div>
-
-    <div class="post-content">
-      {{p.content}}
-    </div>
-  </div>
+    {{ p.render() | safe }}
+    <br><br>
   {% endfor %}
 
 {% endblock %}

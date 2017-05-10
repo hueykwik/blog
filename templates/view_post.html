@@ -1,12 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>{{subject}}</title>
-</head>
-<body>
-  <h2>{{subject}} {{created}}</h2>
+{% extends "base.html" %}
 
-  {{content}}
-</body>
-</html>
+{% block content %}
+  {{post.render() | safe}}
+{% endblock %}
