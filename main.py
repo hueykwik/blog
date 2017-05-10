@@ -25,6 +25,11 @@ jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
                                autoescape=True)
 
 
+def render_str(template, **params):
+    t = jinja_env.get_template(template)
+    return t.render(params)
+
+
 class Handler(webapp2.RequestHandler):
     """
     Base class for other Handlers we write. Handler takes care
@@ -34,8 +39,7 @@ class Handler(webapp2.RequestHandler):
         self.response.out.write(*a, **kw)
 
     def render_str(self, template, **params):
-        t = jinja_env.get_template(template)
-        return t.render(params)
+        return render_str(template, **params)
 
     def render(self, template, **kw):
         self.write(self.render_str(template, **kw))
@@ -51,36 +55,40 @@ class BlogHandler(Handler):
 
 class BlogPost(db.Model):
     subject = db.StringProperty(required=True)
-    blog = db.TextProperty(required=True)
+    content = db.TextProperty(required=True)
     created = db.DateTimeProperty(auto_now_add=True)
+
+    def render(self):
+        self._render_text = self.content.replace('\n', '<br>')
+        return render_str("post.html", p=self)
 
 
 class NewPostHandler(Handler):
-    def render_post(self, subject="", blog="", error=""):
-        self.render("new_post.html", subject=subject, blog=blog, error=error)
+    def render_post(self, subject="", content="", error=""):
+        self.render("new_post.html", subject=subject, content=content, error=error)
 
     def get(self):
         self.render_post()
 
     def post(self):
         subject = self.request.get("subject")
-        blog = self.request.get("blog")
+        content = self.request.get("content")
 
-        if subject and blog:
-            blog_post = BlogPost(subject=subject, blog=blog)
+        if subject and content:
+            blog_post = BlogPost(subject=subject, content=content)
             blog_post.put()
 
             self.redirect("/blog/%d" % blog_post.key().id())
         else:
             error = "subject and content, please!"
-            self.render_post(subject, blog, error)
+            self.render_post(subject, content, error)
 
 
 class ViewPostHandler(Handler):
     def get(self, post_id):
         blog_post = BlogPost.get_by_id(int(post_id))
 
-        self.render("view_post.html", subject=blog_post.subject, blog=blog_post.blog, created=blog_post.created)
+        self.render("view_post.html", subject=blog_post.subject, content=blog_post.content, created=blog_post.created)
 
 
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
