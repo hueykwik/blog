@@ -24,11 +24,28 @@ from google.appengine.ext import db
 import webapp2
 import jinja2
 
+import hmac
 import model
+
+SECRET = 'imsosecret'
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
                                autoescape=True)
+
+
+def hash_str(s):
+    return hmac.new(SECRET, s).hexdigest()
+
+
+def make_secure_val(s):
+    return "%s|%s" % (s, hash_str(s))
+
+
+def check_secure_val(h):
+    val = h.split('|')[0]
+    if h == make_secure_val(val):
+        return val
 
 
 def render_str(template, **params):
@@ -162,12 +179,15 @@ class SignupHandler(Handler):
         if has_error:
             self.render('signup.html', **params)
         else:
-            # create a user
             hash_password = make_pw_hash(username, password)
-
             user = model.User(username=username, password=hash_password)
             user.put()
-            # set cookie
+
+            cookie = ("user_id=%s; Path=/" %
+                      make_secure_val(str(user.key().id())))
+
+            self.response.headers.add_header("Set-Cookie", cookie)
+
             self.redirect("/welcome?username=%s" % username)
 
 
