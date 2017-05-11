@@ -43,6 +43,9 @@ def make_secure_val(s):
 
 
 def check_secure_val(h):
+    if not h:
+        return None
+
     val = h.split('|')[0]
     if h == make_secure_val(val):
         return val
@@ -188,7 +191,7 @@ class SignupHandler(Handler):
 
             self.response.headers.add_header("Set-Cookie", cookie)
 
-            self.redirect("/welcome?username=%s" % username)
+            self.redirect("/welcome")
 
 
 class WelcomeHandler(Handler):
@@ -196,10 +199,18 @@ class WelcomeHandler(Handler):
     Welcomes the new user.
     """
     def get(self):
-        username = self.request.get('username')
+        # things to check
+        # 1. no cookie
+        # 2. forged cookie
+        # 3. user_id exists in DB
+        user = None
 
-        if username:
-            self.render('welcome.html', username=username)
+        user_id = check_secure_val(self.request.cookies.get('user_id'))
+        if user_id:
+            user = model.User.get_by_id(int(user_id))
+
+        if user:
+            self.render('welcome.html', username=user.username)
         else:
             self.redirect("/signup")
 
