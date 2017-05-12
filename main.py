@@ -214,10 +214,16 @@ class WelcomeHandler(Handler):
         else:
             self.redirect("/signup")
 
+
+class LoginHandler(Handler):
+    def get(self):
+        self.render('login.html')
+
 app = webapp2.WSGIApplication([
     ('/blog/?', BlogHandler),
     ('/blog/newpost', NewPostHandler),
     (r'/blog/(\d+)', ViewPostHandler),
     ('/signup', SignupHandler),
-    ('/welcome', WelcomeHandler)
+    ('/welcome', WelcomeHandler),
+    ('/login', LoginHandler)
 ], debug=True)
