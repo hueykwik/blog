@@ -217,6 +217,13 @@ class WelcomeHandler(Handler):
 
 
 class LoginHandler(Handler):
+    def check_password(self, username, password):
+        # Assume that username exists in DB.
+        query = db.GqlQuery("select * from User where username = '%s'" % username)
+        user = query.get()
+
+        return valid_pw(username, password, user.password)
+
     def get(self):
         self.render('login.html')
 
@@ -224,13 +231,11 @@ class LoginHandler(Handler):
         username = self.request.get('username')
         password = self.request.get('password')
 
-        error = None
+        if not username_exists(username) or not self.check_password(username, password):
+            self.render('login.html', error='Invalid login')
+        else:
+            self.render('welcome.html', username=username)
 
-        if not username_exists(username):
-            error = "Invalid login"
-
-        if error:
-            self.render('login.html', error="Invalid login")
 
 
 app = webapp2.WSGIApplication([
