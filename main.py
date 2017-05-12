@@ -130,17 +130,18 @@ def valid_pw(name, pw, h):
     return make_pw_hash(name, pw, salt) == h
 
 
+def username_exists(username):
+    users = db.GqlQuery("select * from User where username = '%s'" % username)
+
+    return users.count(limit=1) != 0
+
+
 class SignupHandler(Handler):
     """
     Handles user signup requests.
     """
     def valid_username(self, username):
         return USER_RE.match(username)
-
-    def username_exists(self, username):
-        users = db.GqlQuery("select * from User where username = '%s'" % username)
-
-        return users.count(limit=1) != 0
 
     def valid_password(self, password):
         return PASSWORD_RE.match(password)
@@ -164,7 +165,7 @@ class SignupHandler(Handler):
         if not self.valid_username(username):
             params['username_error'] = "That's not a valid username."
             has_error = True
-        elif self.username_exists(username):
+        elif username_exists(username):
             params['username_error'] = "That username already exists."
             has_error = True
 
@@ -218,6 +219,19 @@ class WelcomeHandler(Handler):
 class LoginHandler(Handler):
     def get(self):
         self.render('login.html')
+
+    def post(self):
+        username = self.request.get('username')
+        password = self.request.get('password')
+
+        error = None
+
+        if not username_exists(username):
+            error = "Invalid login"
+
+        if error:
+            self.render('login.html', error="Invalid login")
+
 
 app = webapp2.WSGIApplication([
     ('/blog/?', BlogHandler),

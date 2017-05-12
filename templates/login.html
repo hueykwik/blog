@@ -12,9 +12,6 @@
             <input type="text" name="username" value="{{username}}">
           </td>
           <td class="error">
-          {% if username_error %}
-            {{username_error}}
-          {% endif %}
           </td>
         </tr>
 
@@ -26,10 +23,14 @@
             <input type="password" name="password" value="">
           </td>
           <td class="error">
-          {% if password_error %}
-            {{password_error}}
-          {% endif %}
           </td>
+        </tr>
+
+        <tr>
+          <td class="error">
+          {% if error %}
+            {{error}}
+          {% endif %}
         </tr>
       </tbody></table>
 
