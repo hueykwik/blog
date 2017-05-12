@@ -130,10 +130,14 @@ def valid_pw(name, pw, h):
     return make_pw_hash(name, pw, salt) == h
 
 
-def username_exists(username):
+def get_user(username):
     users = db.GqlQuery("select * from User where username = '%s'" % username)
 
-    return users.count(limit=1) != 0
+    return users.get()
+
+
+def user_cookie_string(user):
+    return "user_id=%s; Path=/" % make_secure_val(str(user.key().id()))
 
 
 class SignupHandler(Handler):
@@ -165,7 +169,7 @@ class SignupHandler(Handler):
         if not self.valid_username(username):
             params['username_error'] = "That's not a valid username."
             has_error = True
-        elif username_exists(username):
+        elif get_user(username):
             params['username_error'] = "That username already exists."
             has_error = True
 
@@ -187,10 +191,7 @@ class SignupHandler(Handler):
             user = model.User(username=username, password=hash_password)
             user.put()
 
-            cookie = ("user_id=%s; Path=/" %
-                      make_secure_val(str(user.key().id())))
-
-            self.response.headers.add_header("Set-Cookie", cookie)
+            self.response.headers.add_header("Set-Cookie", user_cookie_string(user))
 
             self.redirect("/welcome")
 
@@ -231,12 +232,13 @@ class LoginHandler(Handler):
         username = self.request.get('username')
         password = self.request.get('password')
 
-        if not username_exists(username) or not self.check_password(username, password):
+        user = get_user(username)
+
+        if not user or not self.check_password(username, password):
             self.render('login.html', error='Invalid login')
         else:
-            self.render('welcome.html', username=username)
-
-
+            self.response.headers.add_header("Set-Cookie", user_cookie_string(user))
+            self.redirect("/welcome")
 
 app = webapp2.WSGIApplication([
     ('/blog/?', BlogHandler),
