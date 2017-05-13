@@ -240,11 +240,18 @@ class LoginHandler(Handler):
             self.response.headers.add_header("Set-Cookie", user_cookie_string(user))
             self.redirect("/welcome")
 
+
+class LogoutHandler(Handler):
+    def get(self):
+        self.response.headers.add_header("Set-Cookie", "user_id=; Path=/")
+        self.redirect("/signup")
+
 app = webapp2.WSGIApplication([
     ('/blog/?', BlogHandler),
     ('/blog/newpost', NewPostHandler),
     (r'/blog/(\d+)', ViewPostHandler),
     ('/signup', SignupHandler),
     ('/welcome', WelcomeHandler),
-    ('/login', LoginHandler)
+    ('/login', LoginHandler),
+    ('/logout', LogoutHandler)
 ], debug=True)
