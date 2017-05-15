@@ -70,6 +70,27 @@ class Handler(webapp2.RequestHandler):
     def render(self, template, **kw):
         self.write(self.render_str(template, **kw))
 
+    def set_secure_cookie(self, name, val):
+        cookie_val = make_secure_val(val)
+        self.response.headers.add_header(
+            'Set-Cookie',
+            '%s=%s; Path=/' % (name, cookie_val))
+
+    def read_secure_cookie(self, name):
+        cookie_val = self.request.cookies.get(name)
+        return cookie_val and check_secure_val(cookie_val)
+
+    def login(self, user):
+        self.set_secure_cookie('user_id', str(user.key().id()))
+
+    def logout(self):
+        self.response.headers.add_header('Set-Cookie', 'user_id=; Path=/')
+
+    def initialize(self, *a, **kw):
+        webapp2.RequestHandler.initialize(self, *a, **kw)
+        uid = self.read_secure_cookie('user_id')
+        self.user = uid and model.User.get_by_id(int(uid))
+
 
 class Blog(Handler):
     def get(self):
@@ -191,7 +212,7 @@ class Signup(Handler):
             user = model.User(username=username, password=hash_password)
             user.put()
 
-            self.response.headers.add_header("Set-Cookie", user_cookie_string(user))
+            self.login(user)
 
             self.redirect("/welcome")
 
@@ -207,7 +228,7 @@ class Welcome(Handler):
         # 3. user_id exists in DB
         user = None
 
-        user_id = check_secure_val(self.request.cookies.get('user_id'))
+        user_id = self.read_secure_cookie('user_id')
         if user_id:
             user = model.User.get_by_id(int(user_id))
 
@@ -237,13 +258,13 @@ class Login(Handler):
         if not user or not self.check_password(username, password):
             self.render('login.html', error='Invalid login')
         else:
-            self.response.headers.add_header("Set-Cookie", user_cookie_string(user))
+            self.login(user)
             self.redirect("/welcome")
 
 
 class Logout(Handler):
     def get(self):
-        self.response.headers.add_header("Set-Cookie", "user_id=; Path=/")
+        self.logout()
         self.redirect("/signup")
 
 app = webapp2.WSGIApplication([
