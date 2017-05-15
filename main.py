@@ -71,7 +71,7 @@ class Handler(webapp2.RequestHandler):
         self.write(self.render_str(template, **kw))
 
 
-class BlogHandler(Handler):
+class Blog(Handler):
     def get(self):
         blog_posts = db.GqlQuery("SELECT * FROM BlogPost "
                                  "ORDER BY created DESC ")
@@ -79,7 +79,7 @@ class BlogHandler(Handler):
         self.render("front.html", blog_posts=blog_posts)
 
 
-class NewPostHandler(Handler):
+class NewPost(Handler):
     def render_post(self, subject="", content="", error=""):
         self.render("new_post.html", subject=subject, content=content, error=error)
 
@@ -100,7 +100,7 @@ class NewPostHandler(Handler):
             self.render_post(subject, content, error)
 
 
-class ViewPostHandler(Handler):
+class ViewPost(Handler):
     def get(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
 
@@ -140,7 +140,7 @@ def user_cookie_string(user):
     return "user_id=%s; Path=/" % make_secure_val(str(user.key().id()))
 
 
-class SignupHandler(Handler):
+class Signup(Handler):
     """
     Handles user signup requests.
     """
@@ -196,7 +196,7 @@ class SignupHandler(Handler):
             self.redirect("/welcome")
 
 
-class WelcomeHandler(Handler):
+class Welcome(Handler):
     """
     Welcomes the new user.
     """
@@ -217,7 +217,7 @@ class WelcomeHandler(Handler):
             self.redirect("/signup")
 
 
-class LoginHandler(Handler):
+class Login(Handler):
     def check_password(self, username, password):
         # Assume that username exists in DB.
         query = db.GqlQuery("select * from User where username = '%s'" % username)
@@ -241,17 +241,17 @@ class LoginHandler(Handler):
             self.redirect("/welcome")
 
 
-class LogoutHandler(Handler):
+class Logout(Handler):
     def get(self):
         self.response.headers.add_header("Set-Cookie", "user_id=; Path=/")
         self.redirect("/signup")
 
 app = webapp2.WSGIApplication([
-    ('/blog/?', BlogHandler),
-    ('/blog/newpost', NewPostHandler),
-    (r'/blog/(\d+)', ViewPostHandler),
-    ('/signup', SignupHandler),
-    ('/welcome', WelcomeHandler),
-    ('/login', LoginHandler),
-    ('/logout', LogoutHandler)
+    ('/blog/?', Blog),
+    ('/blog/newpost', NewPost),
+    (r'/blog/(\d+)', ViewPost),
+    ('/signup', Signup),
+    ('/welcome', Welcome),
+    ('/login', Login),
+    ('/logout', Logout)
 ], debug=True)
