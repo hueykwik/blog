@@ -2,8 +2,9 @@
 
 {% block content %}
 
-  {% for p in blog_posts %}
-    {{ p.render() | safe }}
+  {% for post in blog_posts %}
+    {{ post.set_render_text() }}
+    {% include 'post.html' %}
     <br><br>
   {% endfor %}
 

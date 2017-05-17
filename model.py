@@ -1,5 +1,4 @@
 from google.appengine.ext import db
-import main
 
 
 class BlogPost(db.Model):
@@ -7,9 +6,11 @@ class BlogPost(db.Model):
     content = db.TextProperty(required=True)
     created = db.DateTimeProperty(auto_now_add=True)
 
-    def render(self):
+    def set_render_text(self):
+        """Replaces newline characters from content with the <br> HTML tag,
+        storing it in a _render_text instance variable.
+        """
         self._render_text = self.content.replace('\n', '<br>')
-        return main.render_str("post.html", p=self)
 
 
 class User(db.Model):
