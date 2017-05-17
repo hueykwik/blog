@@ -210,7 +210,7 @@ class Signup(Handler):
             self.render('signup.html', **params)
         else:
             hash_password = make_pw_hash(username, password)
-            user = model.User(username=username, password=hash_password)
+            user = model.User(username=username, hash_password=hash_password)
             user.put()
 
             self.login(user)

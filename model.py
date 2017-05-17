@@ -14,6 +14,13 @@ class BlogPost(db.Model):
 
 
 class User(db.Model):
+    """Models a user.
+
+    Attributes:
+        username: The user's username
+        password: The user's hashed and salted password.
+        email: The user's email
+    """
     username = db.StringProperty(required=True)
-    password = db.StringProperty(required=True)
+    hash_password = db.StringProperty(required=True)
     email = db.EmailProperty()
