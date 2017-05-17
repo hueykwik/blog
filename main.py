@@ -92,7 +92,7 @@ class Handler(webapp2.RequestHandler):
         self.user = uid and model.User.get_by_id(int(uid))
 
 
-class Blog(Handler):
+class FrontPage(Handler):
     def get(self):
         blog_posts = db.GqlQuery("SELECT * FROM BlogPost "
                                  "ORDER BY created DESC ")
@@ -269,7 +269,7 @@ class Logout(Handler):
         self.redirect("/signup")
 
 app = webapp2.WSGIApplication([
-    ('/blog/?', Blog),
+    ('/blog/?', FrontPage),
     ('/blog/newpost', NewPost),
     (r'/blog/(\d+)', ViewPost),
     ('/signup', Signup),
