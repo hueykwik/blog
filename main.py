@@ -93,6 +93,8 @@ class Handler(webapp2.RequestHandler):
 
 
 class FrontPage(Handler):
+    """Shows all blog posts.
+    """
     def get(self):
         blog_posts = db.GqlQuery("SELECT * FROM BlogPost "
                                  "ORDER BY created DESC ")
@@ -101,6 +103,8 @@ class FrontPage(Handler):
 
 
 class NewPost(Handler):
+    """Handles creating a single post.
+    """
     def render_post(self, subject="", content="", error=""):
         self.render("new_post.html", subject=subject, content=content, error=error)
 
@@ -122,6 +126,8 @@ class NewPost(Handler):
 
 
 class ViewPost(Handler):
+    """Handles viewing a single post.
+    """
     def get(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
         blog_post.set_render_text()
@@ -163,8 +169,7 @@ def user_cookie_string(user):
 
 
 class Signup(Handler):
-    """
-    Handles user signup requests.
+    """Handles user signup requests.
     """
     def valid_username(self, username):
         return USER_RE.match(username)
@@ -219,11 +224,10 @@ class Signup(Handler):
 
 
 class Welcome(Handler):
-    """
-    Welcomes the new user.
+    """Welcomes a user.
     """
     def get(self):
-        # things to check
+        # Things to check:
         # 1. no cookie
         # 2. forged cookie
         # 3. user_id exists in DB
@@ -240,6 +244,8 @@ class Welcome(Handler):
 
 
 class Login(Handler):
+    """Handles viewing a single post.
+    """
     def check_password(self, username, password):
         # Assume that username exists in DB.
         query = db.GqlQuery("select * from User where username = '%s'" % username)
@@ -264,6 +270,8 @@ class Login(Handler):
 
 
 class Logout(Handler):
+    """Handles logging out.
+    """
     def get(self):
         self.logout()
         self.redirect("/signup")
