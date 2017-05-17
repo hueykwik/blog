@@ -77,6 +77,11 @@ input[type=submit] {
     font-weight: bold;
 }
 
+.post-title a {
+    text-decoration: none;
+    color: #333;
+}
+
 .post-date {
     position: absolute;
     right: 0px;
