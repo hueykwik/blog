@@ -3,7 +3,6 @@
 {% block content %}
 
   {% for post in blog_posts %}
-    {{ post.set_render_text() }}
     {% include 'post.html' %}
     <br><br>
   {% endfor %}

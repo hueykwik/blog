@@ -130,7 +130,6 @@ class ViewPost(Handler):
     """
     def get(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
-        blog_post.set_render_text()
 
         self.render("view_post.html", post=blog_post)
 

@@ -13,11 +13,8 @@ class BlogPost(db.Model):
     content = db.TextProperty(required=True)
     created = db.DateTimeProperty(auto_now_add=True)
 
-    def set_render_text(self):
-        """Replaces newline characters from content with the <br> HTML tag,
-        storing it in a _render_text instance variable.
-        """
-        self._render_text = self.content.replace('\n', '<br>')
+    def get_render_text(self):
+        return self.content.replace('\n', '<br>')
 
 
 class User(db.Model):
