@@ -130,8 +130,13 @@ class EditPost(Handler):
     """
 
     def get(self, post_id):
+        blog_post = model.BlogPost.get_by_id(int(post_id))
+
+        if blog_post.author.username != self.user.username:
+            self.redirect("/blog/%d" % blog_post.key().id())
+
         self.response.headers['Content-Type'] = 'text/plain'
-        self.response.write('Hello, World!')
+        self.response.write('Edit Post')
 
 
 class ViewPost(Handler):
