@@ -1,4 +1,12 @@
-  <form method="post">
+{% extends "base.html" %}
+
+{% block user_login %}
+  {% include 'user_login.html' %}
+{% endblock %}
+
+{% block content %}
+  <h2>{{title}}</h2>
+    <form method="post">
     <p>subject</p>
     <input type="text" name="subject" value={{subject}}>
     <br>
@@ -13,3 +21,5 @@
 
     <input type="submit"></input>
   </form>
+
+{% endblock %}

@@ -105,8 +105,8 @@ class FrontPage(Handler):
 class NewPost(Handler):
     """Handles creating a single post.
     """
-    def render_post(self, subject="", content="", error=""):
-        self.render("new_post.html", subject=subject, content=content, error=error, user=self.user)
+    def render_post(self, subject="", content="", error="", title="new post"):
+        self.render("new_post.html", subject=subject, content=content, error=error, user=self.user, title=title)
 
     def get(self):
         self.render_post()
@@ -125,7 +125,7 @@ class NewPost(Handler):
             self.render_post(subject, content, error)
 
 
-class EditPost(Handler):
+class EditPost(NewPost):
     """Handles editing a post.
     """
     def get(self, post_id):
@@ -134,8 +134,11 @@ class EditPost(Handler):
         if blog_post.author.username != self.user.username:
             self.redirect("/blog/%d" % blog_post.key().id())
 
-        self.response.headers['Content-Type'] = 'text/plain'
-        self.response.write('Edit Post')
+        print(blog_post.subject)
+
+        subject = blog_post.subject
+
+        self.render_post(subject=subject, content=blog_post.content, title="edit post")
 
 
 class ViewPost(Handler):
