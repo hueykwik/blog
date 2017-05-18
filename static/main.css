@@ -53,6 +53,21 @@ input[type=submit] {
   font-size: 24px;
 }
 
+.nav {
+    display: inline;
+}
+
+.logo {
+    color: #222;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.user {
+    float: right;
+    text-decoration: none;
+}
+
 .main-title {
     display: block;
     color: #222;
