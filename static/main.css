@@ -65,6 +65,10 @@ input[type=submit] {
   font-size: 24px;
 }
 
+.author {
+    font-size: 14px;
+}
+
 .logo {
     color: #222;
     font-weight: bold;
@@ -82,11 +86,10 @@ input[type=submit] {
 
 .post-heading {
     position: relative;
-    border-bottom: 3px solid #666;
 }
 
 .post-title {
-    font-size: 24px;
+    font-size: 29px;
     font-weight: bold;
 }
 
@@ -95,15 +98,12 @@ input[type=submit] {
     color: #333;
 }
 
-.post-date {
-    position: absolute;
-    right: 0px;
-    bottom: 0px;
-    color: #999;
-
-}
-
 .post-content {
     margin-top: 5px;
+}
+
+.info {
+    font-size: 12px;
+    color: rgba(0,0,0,.44)
 }
 
