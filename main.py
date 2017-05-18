@@ -106,7 +106,7 @@ class NewPost(Handler):
     """Handles creating a single post.
     """
     def render_post(self, subject="", content="", error="", title="new post"):
-        self.render("new_post.html", subject=subject, content=content, error=error, user=self.user, title=title)
+        self.render("post_form.html", subject=subject, content=content, error=error, user=self.user, title=title)
 
     def get(self):
         self.render_post()
@@ -147,7 +147,7 @@ class ViewPost(Handler):
     def get(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
 
-        self.render("view_post.html", post=blog_post, user=self.user)
+        self.render("post_form.html", post=blog_post, user=self.user)
 
 
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
