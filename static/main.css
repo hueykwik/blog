@@ -43,6 +43,12 @@ input[type=password] {
 
 nav {
     margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #222;
+}
+
+nav a {
+    text-decoration: none;
 }
 
 textarea {
