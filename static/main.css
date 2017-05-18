@@ -53,10 +53,6 @@ input[type=submit] {
   font-size: 24px;
 }
 
-.nav {
-    display: inline;
-}
-
 .logo {
     color: #222;
     font-weight: bold;
@@ -65,16 +61,6 @@ input[type=submit] {
 
 .user {
     float: right;
-    text-decoration: none;
-}
-
-.main-title {
-    display: block;
-    color: #222;
-    font-size: 40px;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 30px;
     text-decoration: none;
 }
 
