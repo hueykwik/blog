@@ -237,7 +237,7 @@ class Welcome(Handler):
             user = model.User.get_by_id(int(user_id))
 
         if user:
-            self.render('welcome.html', username=user.username, user=user)
+            self.render('welcome.html', user=user)
         else:
             self.redirect("/signup")
 
