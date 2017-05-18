@@ -128,7 +128,6 @@ class NewPost(Handler):
 class EditPost(Handler):
     """Handles editing a post.
     """
-
     def get(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
 

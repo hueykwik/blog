@@ -6,19 +6,5 @@
 
 {% block content %}
   <h2>new post</h2>
-  <form method="post">
-    <p>subject</p>
-    <input type="text" name="subject" value={{subject}}>
-    <br>
-
-    <p>blog</p>
-    <textarea name="content">{{content}}</textarea>
-    <br>
-
-    {% if error %}
-    <p class="error">{{error}}</p>
-    {% endif %}
-
-    <input type="submit"></input>
-  </form>
+  {% include 'post_form.html' %}
 {% endblock %}
