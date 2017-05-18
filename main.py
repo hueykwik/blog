@@ -125,6 +125,15 @@ class NewPost(Handler):
             self.render_post(subject, content, error)
 
 
+class EditPost(Handler):
+    """Handles editing a post.
+    """
+
+    def get(self, post_id):
+        self.response.headers['Content-Type'] = 'text/plain'
+        self.response.write('Hello, World!')
+
+
 class ViewPost(Handler):
     """Handles viewing a single post.
     """
@@ -278,6 +287,7 @@ class Logout(Handler):
 app = webapp2.WSGIApplication([
     ('/blog/?', FrontPage),
     ('/blog/newpost', NewPost),
+    (r'/blog/(\d+)/edit', EditPost),
     (r'/blog/(\d+)', ViewPost),
     ('/signup', Signup),
     ('/welcome', Welcome),
