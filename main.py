@@ -99,7 +99,7 @@ class FrontPage(Handler):
         blog_posts = db.GqlQuery("SELECT * FROM BlogPost "
                                  "ORDER BY created DESC ")
 
-        self.render("front.html", blog_posts=blog_posts)
+        self.render("front.html", blog_posts=blog_posts, user=self.user)
 
 
 class NewPost(Handler):
@@ -250,7 +250,7 @@ class Login(Handler):
         query = db.GqlQuery("select * from User where username = '%s'" % username)
         user = query.get()
 
-        return valid_pw(username, password, user.password)
+        return valid_pw(username, password, user.hash_password)
 
     def get(self):
         self.render('login.html')

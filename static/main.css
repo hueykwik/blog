@@ -41,6 +41,9 @@ input[type=password] {
     font-family: monospace;
 }
 
+nav {
+    margin-bottom: 16px;
+}
 
 textarea {
   width: 500px;
