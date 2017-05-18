@@ -116,7 +116,7 @@ class NewPost(Handler):
         content = self.request.get("content")
 
         if subject and content:
-            blog_post = model.BlogPost(subject=subject, content=content)
+            blog_post = model.BlogPost(subject=subject, content=content, author=self.user)
             blog_post.put()
 
             self.redirect("/blog/%d" % blog_post.key().id())

@@ -1,12 +1,18 @@
 <div class="post">
   <div class="post-heading">
+    <div>
+      {{post.author.username}}
+    </div>
+    <div>
+      {{post.created.strftime("%b %d")}}
+    </div>
     <div class="post-title">
       <a href="/blog/{{post.key().id()}}">{{post.subject}}</a>
     </div>
 
-    <div class="post-date">
+    <!-- <div class="post-date">
       {{post.created.strftime("%b %d, %Y")}}
-    </div>
+    </div> -->
   </div>
 
   <div class="post-content">
