@@ -1,13 +1,7 @@
 {% extends "base.html" %}
 
 {% block user_login %}
-  <span class="user">
-  {% if user %}
-  {{user.username}} <a href="/logout">Logout</a>
-  {% else %}
-  <a href="/login">Login</a>
-  {% endif %}
-  </span>
+  {% include 'user_login.html' %}
 {% endblock %}
 
 {% block content %}

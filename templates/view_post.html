@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block user_login %}
+  {% include 'user_login.html' %}
+{% endblock %}
+
 {% block content %}
   {% include 'post.html' %}
 {% endblock %}
