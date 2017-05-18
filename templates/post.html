@@ -7,6 +7,9 @@
     <div class="info">
       {{post.author.username}} ·
       {{post.created.strftime("%b %d")}}
+      {% if post.author.username == user.username %}
+        · <a href="/blog/{{post.key().id()}}/edit">Edit</a>
+      {% endif %}
     </div>
   </div>
 
