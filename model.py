@@ -33,9 +33,10 @@ class BlogPost(db.Model):
     def has_liked(self, user):
         """Returns True if `user` has liked this post, False otherwise.
         """
-        for like in self.likes:
-            if like.voter.key().id() == user.key().id():
-                return True
+        if user:
+            for like in self.likes:
+                if like.voter.key().id() == user.key().id():
+                    return True
         return False
 
 
