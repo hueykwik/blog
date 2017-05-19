@@ -161,11 +161,14 @@ class ViewPost(Handler):
 
     def get(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
+        comments = blog_post.comments.order("-created")
+        num_comments = comments.count()
 
         self.render("view_post.html", post=blog_post, user=self.user,
                     show_comments=True,
                     can_comment=self.can_comment(blog_post.author),
-                    comments=blog_post.comments.order("-created"))
+                    comments=comments,
+                    num_comments=num_comments)
 
     def post(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
