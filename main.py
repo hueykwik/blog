@@ -173,6 +173,7 @@ class ViewPost(Handler):
         else:
             self.redirect("/blog/%d" % blog_post.key().id())
 
+
 class NewPost(Handler):
     """Handles creating a single post.
     """
