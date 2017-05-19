@@ -87,7 +87,7 @@ class Handler(webapp2.RequestHandler):
         self.response.headers.add_header('Set-Cookie', 'user_id=; Path=/')
 
     def handle_like(self, blog_post):
-        if not blog_post.can_like(self.user):
+        if not blog_post.can_like_or_comment(self.user):
             self.response.out.write("Authors are not allowed to like")
             return
 
@@ -180,14 +180,11 @@ class ViewPost(Handler):
 
         self.render("view_post.html", post=blog_post, user=self.user,
                     show_comments=True,
-                    can_comment=self.can_comment(blog_post.author),
+                    can_comment=blog_post.can_like_or_comment(self.user),
                     comments=comments)
 
-    def can_comment(self, author):
-        return self.user and author.key().id() != self.user.key().id()
-
     def post_like(self, blog_post):
-        if not blog_post.can_like(self.user):
+        if not blog_post.can_like_or_comment(self.user):
             self.error(404)
             self.response.out.write("Authors are not allowed to like")
             return
@@ -198,7 +195,7 @@ class ViewPost(Handler):
         self.redirect("/blog/%d" % blog_post.key().id())
 
     def post_comment(self, blog_post):
-        if not self.can_comment(blog_post.author):
+        if not blog_post.can_like_or_comment(self.user):
             self.error(404)
             self.response.out.write("Authors are not allowed to comment!")
             return

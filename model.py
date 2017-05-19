@@ -39,7 +39,7 @@ class BlogPost(db.Model):
                     return True
         return False
 
-    def can_like(self, user):
+    def can_like_or_comment(self, user):
         return user and self.author.key().id() != user.key().id()
 
 
