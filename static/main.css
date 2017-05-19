@@ -138,3 +138,8 @@ input[type=submit] {
 .icon-link {
     color: #333;
 }
+
+.like {
+    border: 0px;
+    background-color: white;
+}
