@@ -171,7 +171,7 @@ class ViewPost(Handler):
         return self.can_comment(author)
 
     def can_comment(self, author):
-        return author.key().id() != self.user.key().id()
+        return self.user and author.key().id() != self.user.key().id()
 
     def post_like(self, blog_post):
         if not self.can_like(blog_post.author):
