@@ -156,10 +156,13 @@ class EditPost(NewPost):
 class ViewPost(Handler):
     """Handles viewing a single post.
     """
+    def can_comment(self, author):
+        return author.username != self.user.username
+
     def get(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
 
-        show_comments = blog_post.author.username != self.user.username
+        show_comments = self.can_comment(blog_post.author)
 
         self.render("view_post.html", post=blog_post, user=self.user,
                     show_comments=show_comments)
