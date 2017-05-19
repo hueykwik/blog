@@ -45,3 +45,13 @@ class Comment(db.Model):
     created = db.DateTimeProperty(auto_now_add=True)
     author = db.ReferenceProperty(User, required=True, collection_name="comments")
     post = db.ReferenceProperty(BlogPost, required=True, collection_name="comments")
+
+
+class Like(db.Model):
+    """Models liking posts.
+    """
+
+    created = db.DateTimeProperty(auto_now_add=True)
+    voter = db.ReferenceProperty(User, required=True, collection_name="likes")
+    post = db.ReferenceProperty(BlogPost, required=True,
+                                collection_name="likes")
