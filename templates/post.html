@@ -22,7 +22,7 @@
         <input type="hidden" name="form_name" value="like"></input>
         <li>
           <button class="like">
-            <i class="fa fa-heart-o fa-lg valign-10pct {{'bold' if has_liked}}" aria-hidden="true""></i>
+            <i class="fa fa-heart-o fa-lg valign-10pct {{'bold' if post.has_liked(user)}}" aria-hidden="true""></i>
           </button>
           {{post.likes.count()}}
         </li>

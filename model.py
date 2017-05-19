@@ -30,6 +30,14 @@ class BlogPost(db.Model):
     def get_render_text(self):
         return self.content.replace('\n', '<br>')
 
+    def has_liked(self, user):
+        """Returns True if `user` has liked this post, False otherwise.
+        """
+        for like in self.likes:
+            if like.voter.key().id() == user.key().id():
+                return True
+        return False
+
 
 class Comment(db.Model):
     """Models a blog comment.
@@ -55,3 +63,4 @@ class Like(db.Model):
     voter = db.ReferenceProperty(User, required=True, collection_name="likes")
     post = db.ReferenceProperty(BlogPost, required=True,
                                 collection_name="likes")
+
