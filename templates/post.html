@@ -36,10 +36,16 @@
   </form>
   {% endif %}
 
+  <div class="comments">
   {% for comment in comments %}
-    {{comment.text}}
-    <br><br>
+      <div class="info">
+      {{comment.author.username}} ·
+      {{comment.created.strftime("%b %d")}}
+      </div>
+      {{comment.text}}
+      <br><br>
   {% endfor %}
+  </div>
 
 
 </div>
