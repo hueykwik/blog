@@ -114,6 +114,10 @@ input[type=submit] {
     padding-left: 0px;
 }
 
+.post-footer-nav li + li {
+    margin-left: 5px;
+}
+
 .post-footer-nav li {
     display: inline;
     list-style-type: none;
