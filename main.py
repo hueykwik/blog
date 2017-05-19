@@ -163,6 +163,7 @@ class ViewPost(Handler):
         blog_post = model.BlogPost.get_by_id(int(post_id))
 
         self.render("view_post.html", post=blog_post, user=self.user,
+                    show_comments=True,
                     can_comment=self.can_comment(blog_post.author),
                     comments=blog_post.comments.order("-created"))
 
@@ -181,6 +182,7 @@ class ViewPost(Handler):
             comment.put()
 
             self.render("view_post.html", post=blog_post, user=self.user,
+                        show_comments=True,
                         can_comment=self.can_comment(blog_post.author),
                         comments=blog_post.comments.order("-created"))
 

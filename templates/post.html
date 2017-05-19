@@ -23,29 +23,7 @@
     </ul>
   </div>
 
-  <h4>Responses</h4>
-
-  {% if can_comment %}
-  <form method="post">
-    <textarea name="comment" class="comment" placeholder="Write a comment..."></textarea>
-    <br>
-    <input type="submit" class="publish" value="Publish"></input>
-    {% if error %}
-      <p class="error">{{error}}</p>
-    {% endif %}
-  </form>
+  {% if show_comments %}
+    {% include "comments.html" %}
   {% endif %}
-
-  <div class="comments">
-  {% for comment in comments %}
-      <div class="info">
-      {{comment.author.username}} ·
-      {{comment.created.strftime("%b %d")}}
-      </div>
-      {{comment.text}}
-      <br><br>
-  {% endfor %}
-  </div>
-
-
 </div>
