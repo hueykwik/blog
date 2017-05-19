@@ -118,60 +118,6 @@ class FrontPage(Handler):
             self.handle_like(blog_post)
 
 
-class NewPost(Handler):
-    """Handles creating a single post.
-    """
-    def render_post(self, subject="", content="", error="", title="new post"):
-        self.render("post_form.html", subject=subject, content=content, error=error, user=self.user, title=title)
-
-    def get(self):
-        if self.user:
-            self.render_post()
-        else:
-            self.redirect("/login")
-
-    def post(self):
-        subject = self.request.get("subject")
-        content = self.request.get("content")
-
-        if subject and content:
-            blog_post = model.BlogPost(subject=subject, content=content, author=self.user)
-            blog_post.put()
-
-            self.redirect("/blog/%d" % blog_post.key().id())
-        else:
-            error = "subject and content, please!"
-            self.render_post(subject, content, error)
-
-
-class EditPost(NewPost):
-    """Handles editing a post.
-    """
-    def get(self, post_id):
-        blog_post = model.BlogPost.get_by_id(int(post_id))
-
-        if blog_post.author.key().id() != self.user.key().id():
-            self.redirect("/blog/%d" % blog_post.key().id())
-
-        self.render_post(subject=blog_post.subject, content=blog_post.content, title="edit post")
-
-    def post(self, post_id):
-        subject = self.request.get("subject")
-        content = self.request.get("content")
-
-        if subject and content:
-            blog_post = model.BlogPost.get_by_id(int(post_id))
-            blog_post.subject = subject
-            blog_post.content = content
-
-            blog_post.put()
-
-            self.redirect("/blog/%d" % blog_post.key().id())
-        else:
-            error = "subject and content, please!"
-            self.render_post(subject, content, error)
-
-
 class ViewPost(Handler):
     """Handles viewing a single post.
     """
@@ -226,6 +172,59 @@ class ViewPost(Handler):
 
         else:
             self.redirect("/blog/%d" % blog_post.key().id())
+
+class NewPost(Handler):
+    """Handles creating a single post.
+    """
+    def render_post(self, subject="", content="", error="", title="new post"):
+        self.render("post_form.html", subject=subject, content=content, error=error, user=self.user, title=title)
+
+    def get(self):
+        if self.user:
+            self.render_post()
+        else:
+            self.redirect("/login")
+
+    def post(self):
+        subject = self.request.get("subject")
+        content = self.request.get("content")
+
+        if subject and content:
+            blog_post = model.BlogPost(subject=subject, content=content, author=self.user)
+            blog_post.put()
+
+            self.redirect("/blog/%d" % blog_post.key().id())
+        else:
+            error = "subject and content, please!"
+            self.render_post(subject, content, error)
+
+
+class EditPost(NewPost):
+    """Handles editing a post.
+    """
+    def get(self, post_id):
+        blog_post = model.BlogPost.get_by_id(int(post_id))
+
+        if blog_post.author.key().id() != self.user.key().id():
+            self.redirect("/blog/%d" % blog_post.key().id())
+
+        self.render_post(subject=blog_post.subject, content=blog_post.content, title="edit post")
+
+    def post(self, post_id):
+        subject = self.request.get("subject")
+        content = self.request.get("content")
+
+        if subject and content:
+            blog_post = model.BlogPost.get_by_id(int(post_id))
+            blog_post.subject = subject
+            blog_post.content = content
+
+            blog_post.put()
+
+            self.redirect("/blog/%d" % blog_post.key().id())
+        else:
+            error = "subject and content, please!"
+            self.render_post(subject, content, error)
 
 
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
