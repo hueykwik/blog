@@ -170,6 +170,24 @@ class ViewPost(Handler):
     def can_comment(self, author):
         return author.key().id() != self.user.key().id()
 
+    def post_comment(self, blog_post):
+        if not self.can_comment(blog_post.author):
+            self.error(404)
+            self.response.out.write("Authors are not allowed to comment!")
+            return
+
+        comment_text = self.request.get("comment")
+
+        if comment_text:
+            comment = model.Comment(text=comment_text, author=self.user, post=blog_post)
+            comment.put()
+
+            self.redirect("/blog/%d" % blog_post.key().id())
+        else:
+            error = "comments cannot be blank"
+            self.render("view_post.html", post=blog_post, user=self.user,
+                        can_comment=True, error=error)
+
     def get(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
         self.render_post(blog_post)
@@ -180,22 +198,8 @@ class ViewPost(Handler):
         if self.request.get("form_name") == "like":
             pass
         elif self.request.get("form_name") == "comment":
-            if not self.can_comment(blog_post.author):
-                self.error(404)
-                self.response.out.write("Authors are not allowed to comment!")
-                return
+            self.post_comment(blog_post)
 
-            comment_text = self.request.get("comment")
-
-            if comment_text:
-                comment = model.Comment(text=comment_text, author=self.user, post=blog_post)
-                comment.put()
-
-                self.redirect("/blog/%d" % blog_post.key().id())
-            else:
-                error = "comments cannot be blank"
-                self.render("view_post.html", post=blog_post, user=self.user,
-                            can_comment=True, error=error)
         else:
             self.redirect("/blog/%d" % blog_post.key().id())
 
