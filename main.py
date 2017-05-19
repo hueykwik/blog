@@ -187,7 +187,7 @@ class ViewPost(Handler):
             comment = model.Comment(text=comment_text, author=self.user, post=blog_post)
             comment.put()
 
-            self.render_post(blog_post)
+            self.redirect("/blog/%d" % blog_post.key().id())
         else:
             error = "comments cannot be blank"
             self.render("view_post.html", post=blog_post, user=self.user,
