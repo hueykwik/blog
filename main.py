@@ -164,7 +164,7 @@ class ViewPost(Handler):
 
         self.render("view_post.html", post=blog_post, user=self.user,
                     can_comment=self.can_comment(blog_post.author),
-                    comments=blog_post.comments)
+                    comments=blog_post.comments.order("-created"))
 
     def post(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
@@ -182,7 +182,7 @@ class ViewPost(Handler):
 
             self.render("view_post.html", post=blog_post, user=self.user,
                         can_comment=self.can_comment(blog_post.author),
-                        comments=blog_post.comments)
+                        comments=blog_post.comments.order("-created"))
 
         else:
             error = "comments cannot be blank"
