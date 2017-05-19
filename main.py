@@ -109,7 +109,10 @@ class NewPost(Handler):
         self.render("post_form.html", subject=subject, content=content, error=error, user=self.user, title=title)
 
     def get(self):
-        self.render_post()
+        if self.user:
+            self.render_post()
+        else:
+            self.redirect("/login")
 
     def post(self):
         subject = self.request.get("subject")
