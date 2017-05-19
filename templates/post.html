@@ -21,7 +21,7 @@
       <form method="post">
         <input type="hidden" name="form_name" value="like"></input>
         <li>
-          <button class="like">
+          <button class="like" {{'disabled' if not post.can_like(user)}}>
             <i class="fa fa-heart-o fa-lg valign-10pct {{'bold' if post.has_liked(user)}}" aria-hidden="true""></i>
           </button>
           {{post.likes.count()}}
