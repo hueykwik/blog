@@ -167,8 +167,22 @@ class ViewPost(Handler):
                     can_comment=self.can_comment(blog_post.author),
                     comments=comments)
 
+    def can_like(self, author):
+        return self.can_comment(author)
+
     def can_comment(self, author):
         return author.key().id() != self.user.key().id()
+
+    def post_like(self, blog_post):
+        if not self.can_like(blog_post.author):
+            self.error(404)
+            self.response.out.write("Authors are not allowed to like")
+            return
+
+        like = model.Like(voter=self.user, post=blog_post)
+        like.put()
+
+        self.redirect("/blog/%d" % blog_post.key().id())
 
     def post_comment(self, blog_post):
         if not self.can_comment(blog_post.author):
@@ -196,7 +210,7 @@ class ViewPost(Handler):
         blog_post = model.BlogPost.get_by_id(int(post_id))
 
         if self.request.get("form_name") == "like":
-            pass
+            self.post_like(blog_post)
         elif self.request.get("form_name") == "comment":
             self.post_comment(blog_post)
 
