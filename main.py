@@ -86,6 +86,14 @@ class Handler(webapp2.RequestHandler):
     def logout(self):
         self.response.headers.add_header('Set-Cookie', 'user_id=; Path=/')
 
+    def handle_like(self, blog_post):
+        if not blog_post.can_like(self.user):
+            self.response.out.write("Authors are not allowed to like")
+            return
+
+        like = model.Like(voter=self.user, post=blog_post)
+        like.put()
+
     def initialize(self, *a, **kw):
         webapp2.RequestHandler.initialize(self, *a, **kw)
         uid = self.read_secure_cookie('user_id')
@@ -100,6 +108,14 @@ class FrontPage(Handler):
                                  "ORDER BY created DESC ")
 
         self.render("front.html", blog_posts=blog_posts, user=self.user)
+
+    def post(self):
+        post_id = self.request.get("post_id")
+        blog_post = model.BlogPost.get_by_id(int(post_id))
+
+        if blog_post:
+            self.handle_like(blog_post)
+            self.redirect("/blog")
 
 
 class NewPost(Handler):
@@ -167,14 +183,11 @@ class ViewPost(Handler):
                     can_comment=self.can_comment(blog_post.author),
                     comments=comments)
 
-    def can_like(self, author):
-        return self.can_comment(author)
-
     def can_comment(self, author):
         return self.user and author.key().id() != self.user.key().id()
 
     def post_like(self, blog_post):
-        if not self.can_like(blog_post.author):
+        if not blog_post.can_like(self.user):
             self.error(404)
             self.response.out.write("Authors are not allowed to like")
             return
