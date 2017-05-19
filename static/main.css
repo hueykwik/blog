@@ -141,5 +141,10 @@ input[type=submit] {
 
 .like {
     border: 0px;
+    padding: 0px;
     background-color: white;
+}
+
+.valign-10pct {
+    vertical-align: -10%!important;
 }
