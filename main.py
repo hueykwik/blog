@@ -161,13 +161,12 @@ class ViewPost(Handler):
     """
     def render_post(self, blog_post):
         comments = blog_post.comments.order("-created")
-        num_comments = comments.count()
+        blog_post.set_num_comments()
 
         self.render("view_post.html", post=blog_post, user=self.user,
                     show_comments=True,
                     can_comment=self.can_comment(blog_post.author),
-                    comments=comments,
-                    num_comments=num_comments)
+                    comments=comments)
 
     def can_comment(self, author):
         return author.key().id() != self.user.key().id()
