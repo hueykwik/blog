@@ -36,5 +36,10 @@
   </form>
   {% endif %}
 
+  {% for comment in comments %}
+    {{comment.text}}
+    <br><br>
+  {% endfor %}
+
 
 </div>

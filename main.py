@@ -161,8 +161,10 @@ class ViewPost(Handler):
 
     def get(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
+
         self.render("view_post.html", post=blog_post, user=self.user,
-                    can_comment=self.can_comment(blog_post.author))
+                    can_comment=self.can_comment(blog_post.author),
+                    comments=blog_post.comments)
 
     def post(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
