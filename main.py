@@ -156,11 +156,7 @@ class EditPost(NewPost):
 class ViewPost(Handler):
     """Handles viewing a single post.
     """
-    def can_comment(self, author):
-        return author.key().id() != self.user.key().id()
-
-    def get(self, post_id):
-        blog_post = model.BlogPost.get_by_id(int(post_id))
+    def render_post(self, blog_post):
         comments = blog_post.comments.order("-created")
         num_comments = comments.count()
 
@@ -169,6 +165,13 @@ class ViewPost(Handler):
                     can_comment=self.can_comment(blog_post.author),
                     comments=comments,
                     num_comments=num_comments)
+
+    def can_comment(self, author):
+        return author.key().id() != self.user.key().id()
+
+    def get(self, post_id):
+        blog_post = model.BlogPost.get_by_id(int(post_id))
+        self.render_post(blog_post)
 
     def post(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
@@ -184,11 +187,7 @@ class ViewPost(Handler):
             comment = model.Comment(text=comment_text, author=self.user, post=blog_post)
             comment.put()
 
-            self.render("view_post.html", post=blog_post, user=self.user,
-                        show_comments=True,
-                        can_comment=self.can_comment(blog_post.author),
-                        comments=blog_post.comments.order("-created"))
-
+            self.render_post(blog_post)
         else:
             error = "comments cannot be blank"
             self.render("view_post.html", post=blog_post, user=self.user,
