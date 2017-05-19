@@ -167,6 +167,24 @@ class ViewPost(Handler):
         self.render("view_post.html", post=blog_post, user=self.user,
                     show_comments=show_comments)
 
+    def post(self, post_id):
+        blog_post = model.BlogPost.get_by_id(int(post_id))
+
+        if not self.can_comment(blog_post.author):
+            self.error(404)
+            self.response.out.write("Authors are not allowed to comment!")
+            return
+
+        comment_text = self.request.get("comment")
+
+        if comment_text:
+            comment = model.Comment(text=comment_text, author=self.user, post=blog_post)
+            comment.put()
+        else:
+            error = "comments cannot be blank"
+            self.render("view_post.html", post=blog_post, user=self.user,
+                        show_comments=True, error=error)
+
 
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
 PASSWORD_RE = re.compile(r"^.{3,20}$")

@@ -26,9 +26,16 @@
   {% if show_comments %}
   <h4>Responses</h4>
 
-  <textarea name="comment" class="comment" placeholder="Write a comment..."></textarea>
-  <br>
-  <input type="submit" class="publish" value="Publish"></input>
+  <form method="post">
+    <textarea name="comment" class="comment" placeholder="Write a comment..."></textarea>
+    <br>
+    <input type="submit" class="publish" value="Publish"></input>
+    {% if error %}
+      <p class="error">{{error}}</p>
+    {% endif %}
+
+
+  </form>
   {% endif %}
 
 </div>
