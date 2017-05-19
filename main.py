@@ -93,6 +93,7 @@ class Handler(webapp2.RequestHandler):
 
         like = model.Like(voter=self.user, post=blog_post)
         like.put()
+        self.redirect("/blog")
 
     def initialize(self, *a, **kw):
         webapp2.RequestHandler.initialize(self, *a, **kw)
@@ -115,7 +116,6 @@ class FrontPage(Handler):
 
         if blog_post:
             self.handle_like(blog_post)
-            self.redirect("/blog")
 
 
 class NewPost(Handler):
