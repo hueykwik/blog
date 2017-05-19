@@ -22,9 +22,9 @@
         <input type="hidden" name="form_name" value="like"></input>
         <li>
           <button class="like">
-            <i class="fa fa-heart-o fa-lg valign-10pct" aria-hidden="true""></i>
+            <i class="fa fa-heart-o fa-lg valign-10pct {{'bold' if has_liked}}" aria-hidden="true""></i>
           </button>
-        10
+          {{post.likes.count()}}
         </li>
         <li>
           <a class="icon-link" href="/blog/{{post.key().id()}}#comments"><i class="fa fa-comment-o" aria-hidden="true"></i></a> {{post.comments.count()}}

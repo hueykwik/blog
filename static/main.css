@@ -148,3 +148,7 @@ input[type=submit] {
 .valign-10pct {
     vertical-align: -10%!important;
 }
+
+.bold {
+    font-weight: bold!important;
+}

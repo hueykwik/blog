@@ -165,7 +165,14 @@ class ViewPost(Handler):
         self.render("view_post.html", post=blog_post, user=self.user,
                     show_comments=True,
                     can_comment=self.can_comment(blog_post.author),
-                    comments=comments)
+                    comments=comments,
+                    has_liked=self.has_liked(blog_post))
+
+    def has_liked(self, blog_post):
+        for like in blog_post.likes:
+            if like.voter.key().id() == self.user.key().id():
+                return True
+        return False
 
     def can_like(self, author):
         return self.can_comment(author)
