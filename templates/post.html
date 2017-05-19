@@ -19,16 +19,17 @@
   <div class="post-footer">
     <ul class="post-footer-nav">
       <form method="post">
-      <li>
-        <button class="like">
-          <i class="fa fa-heart-o fa-lg valign-10pct" aria-hidden="true""></i>
-        </button>
+        <input type="hidden" name="form_name" value="like"></input>
+        <li>
+          <button class="like">
+            <i class="fa fa-heart-o fa-lg valign-10pct" aria-hidden="true""></i>
+          </button>
         10
-      </li>
-      <li>
-        <a class="icon-link" href="/blog/{{post.key().id()}}#comments"><i class="fa fa-comment-o" aria-hidden="true"></i></a> {{post.comments.count()}}
-      </li>
-      <form>
+        </li>
+        <li>
+          <a class="icon-link" href="/blog/{{post.key().id()}}#comments"><i class="fa fa-comment-o" aria-hidden="true"></i></a> {{post.comments.count()}}
+        </li>
+      </form>
     </ul>
   </div>
 

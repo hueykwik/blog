@@ -177,22 +177,25 @@ class ViewPost(Handler):
     def post(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
 
-        if not self.can_comment(blog_post.author):
-            self.error(404)
-            self.response.out.write("Authors are not allowed to comment!")
-            return
+        if self.request.get("form_name") == "like":
+            pass
+        elif self.request.get("form_name") == "comment":
+            if not self.can_comment(blog_post.author):
+                self.error(404)
+                self.response.out.write("Authors are not allowed to comment!")
+                return
 
-        comment_text = self.request.get("comment")
+            comment_text = self.request.get("comment")
 
-        if comment_text:
-            comment = model.Comment(text=comment_text, author=self.user, post=blog_post)
-            comment.put()
+            if comment_text:
+                comment = model.Comment(text=comment_text, author=self.user, post=blog_post)
+                comment.put()
 
-            self.redirect("/blog/%d" % blog_post.key().id())
-        else:
-            error = "comments cannot be blank"
-            self.render("view_post.html", post=blog_post, user=self.user,
-                        can_comment=True, error=error)
+                self.redirect("/blog/%d" % blog_post.key().id())
+            else:
+                error = "comments cannot be blank"
+                self.render("view_post.html", post=blog_post, user=self.user,
+                            can_comment=True, error=error)
 
 
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
