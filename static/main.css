@@ -84,10 +84,6 @@ input[type=submit] {
     margin-top: 15px;
 }
 
-.post-heading {
-    position: relative;
-}
-
 .post-title {
     font-size: 29px;
     font-weight: bold;
