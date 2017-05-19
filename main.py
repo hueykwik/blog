@@ -161,7 +161,6 @@ class ViewPost(Handler):
     """
     def render_post(self, blog_post):
         comments = blog_post.comments.order("-created")
-        blog_post.set_num_comments()
 
         self.render("view_post.html", post=blog_post, user=self.user,
                     show_comments=True,

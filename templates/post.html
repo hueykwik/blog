@@ -19,7 +19,7 @@
   <div class="post-footer">
     <ul class="post-footer-nav">
       <li><i class="fa fa-heart-o" aria-hidden="true"></i> 10</li>
-      <li><i class="fa fa-comment-o" aria-hidden="true"></i> {{post.comments.count()}}</li>
+      <li><a class="icon-link" href="/blog/{{post.key().id()}}#comments"><i class="fa fa-comment-o" aria-hidden="true"></i></a> {{post.comments.count()}}</li>
     </ul>
   </div>
 

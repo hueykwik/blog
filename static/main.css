@@ -134,3 +134,7 @@ input[type=submit] {
 .comments {
     margin-top: 20px;
 }
+
+.icon-link {
+    color: #333;
+}
