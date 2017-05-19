@@ -134,11 +134,23 @@ class EditPost(NewPost):
         if blog_post.author.username != self.user.username:
             self.redirect("/blog/%d" % blog_post.key().id())
 
-        print(blog_post.subject)
+        self.render_post(subject=blog_post.subject, content=blog_post.content, title="edit post")
 
-        subject = blog_post.subject
+    def post(self, post_id):
+        subject = self.request.get("subject")
+        content = self.request.get("content")
 
-        self.render_post(subject=subject, content=blog_post.content, title="edit post")
+        if subject and content:
+            blog_post = model.BlogPost.get_by_id(int(post_id))
+            blog_post.subject = subject
+            blog_post.content = content
+
+            blog_post.put()
+
+            self.redirect("/blog/%d" % blog_post.key().id())
+        else:
+            error = "subject and content, please!"
+            self.render_post(subject, content, error)
 
 
 class ViewPost(Handler):
@@ -147,7 +159,7 @@ class ViewPost(Handler):
     def get(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
 
-        self.render("post_form.html", post=blog_post, user=self.user)
+        self.render("view_post.html", post=blog_post, user=self.user)
 
 
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
