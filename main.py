@@ -131,7 +131,7 @@ class EditPost(NewPost):
     def get(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
 
-        if blog_post.author.username != self.user.username:
+        if blog_post.author.key().id() != self.user.key().id():
             self.redirect("/blog/%d" % blog_post.key().id())
 
         self.render_post(subject=blog_post.subject, content=blog_post.content, title="edit post")
@@ -157,7 +157,7 @@ class ViewPost(Handler):
     """Handles viewing a single post.
     """
     def can_comment(self, author):
-        return author.username != self.user.username
+        return author.key().id() != self.user.key().id()
 
     def get(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
