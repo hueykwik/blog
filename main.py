@@ -161,11 +161,8 @@ class ViewPost(Handler):
 
     def get(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
-
-        show_comments = self.can_comment(blog_post.author)
-
         self.render("view_post.html", post=blog_post, user=self.user,
-                    show_comments=show_comments)
+                    can_comment=self.can_comment(blog_post.author))
 
     def post(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
@@ -183,7 +180,7 @@ class ViewPost(Handler):
         else:
             error = "comments cannot be blank"
             self.render("view_post.html", post=blog_post, user=self.user,
-                        show_comments=True, error=error)
+                        can_comment=True, error=error)
 
 
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")

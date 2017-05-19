@@ -23,9 +23,9 @@
     </ul>
   </div>
 
-  {% if show_comments %}
   <h4>Responses</h4>
 
+  {% if can_comment %}
   <form method="post">
     <textarea name="comment" class="comment" placeholder="Write a comment..."></textarea>
     <br>
@@ -35,5 +35,6 @@
     {% endif %}
   </form>
   {% endif %}
+
 
 </div>
