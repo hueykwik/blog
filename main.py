@@ -179,6 +179,11 @@ class ViewPost(Handler):
         if comment_text:
             comment = model.Comment(text=comment_text, author=self.user, post=blog_post)
             comment.put()
+
+            self.render("view_post.html", post=blog_post, user=self.user,
+                        can_comment=self.can_comment(blog_post.author),
+                        comments=blog_post.comments)
+
         else:
             error = "comments cannot be blank"
             self.render("view_post.html", post=blog_post, user=self.user,
