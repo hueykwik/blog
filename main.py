@@ -107,12 +107,31 @@ class Handler(webapp2.RequestHandler):
         self.write(self.render_str(template, **kw))
 
     def set_secure_cookie(self, name, val):
+        """Make a secure string for a cookie name and value and sets it in the
+        response header.
+
+
+        Args:
+            name: Name of the cookie.
+            val: The value associated with the cookie.
+
+        Returns:
+            None.
+        """
         cookie_val = make_secure_val(val)
         self.response.headers.add_header(
             'Set-Cookie',
             '%s=%s; Path=/' % (name, cookie_val))
 
     def read_secure_cookie(self, name):
+        """Reads and validates the value for the cookie named `name.`
+
+        Args:
+            name: The name of the cookie.
+
+        Returns:
+            The cookie value if valid (see check_secure_val), None otherwise.
+        """
         cookie_val = self.request.cookies.get(name)
         return cookie_val and check_secure_val(cookie_val)
 
@@ -134,6 +153,15 @@ class Handler(webapp2.RequestHandler):
         raise NotImplementedError
 
     def handle_like(self, blog_post):
+        """Adds or removes a "like" for a given blog_post.
+
+        Args:
+            blog_post: The db.Model BlogPost
+
+        Returns:
+            No return value, but expected that subclasses implement
+            `Handler.like_done()` to handle redirects.
+        """
         if not blog_post.can_like_or_comment(self.user):
             self.response.out.write("Authors are not allowed to like")
             return
