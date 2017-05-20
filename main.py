@@ -86,6 +86,11 @@ class Handler(webapp2.RequestHandler):
     def logout(self):
         self.response.headers.add_header('Set-Cookie', 'user_id=; Path=/')
 
+    def like_done(self, post_id=None):
+        """Called when handle_like is finished persisting the Like.
+        """
+        raise NotImplementedError
+
     def handle_like(self, blog_post):
         if not blog_post.can_like_or_comment(self.user):
             self.response.out.write("Authors are not allowed to like")
@@ -93,7 +98,8 @@ class Handler(webapp2.RequestHandler):
 
         like = model.Like(voter=self.user, post=blog_post)
         like.put()
-        self.redirect("/blog")
+
+        self.like_done(blog_post.key().id())
 
     def initialize(self, *a, **kw):
         webapp2.RequestHandler.initialize(self, *a, **kw)
@@ -117,6 +123,9 @@ class FrontPage(Handler):
         if blog_post:
             self.handle_like(blog_post)
 
+    def like_done(self, post_id=None):
+        self.redirect("/blog")
+
 
 class ViewPost(Handler):
     """Handles viewing a single post.
@@ -128,17 +137,6 @@ class ViewPost(Handler):
                     show_comments=True,
                     can_comment=blog_post.can_like_or_comment(self.user),
                     comments=comments)
-
-    def post_like(self, blog_post):
-        if not blog_post.can_like_or_comment(self.user):
-            self.error(404)
-            self.response.out.write("Authors are not allowed to like")
-            return
-
-        like = model.Like(voter=self.user, post=blog_post)
-        like.put()
-
-        self.redirect("/blog/%d" % blog_post.key().id())
 
     def post_comment(self, blog_post):
         if not blog_post.can_like_or_comment(self.user):
@@ -162,11 +160,14 @@ class ViewPost(Handler):
         blog_post = model.BlogPost.get_by_id(int(post_id))
         self.render_post(blog_post)
 
+    def like_done(self, post_id):
+        self.redirect("/blog/%d" % post_id)
+
     def post(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
 
         if self.request.get("form_name") == "like":
-            self.post_like(blog_post)
+            self.handle_like(blog_post)
         elif self.request.get("form_name") == "comment":
             self.post_comment(blog_post)
 
