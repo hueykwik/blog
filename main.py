@@ -205,6 +205,18 @@ class ViewPost(Handler):
     """Handles viewing a single post.
     """
     def render_post(self, blog_post):
+        """Renders a blog post.
+
+        This function call will result in the display of a blog post with
+        its title, contents, number of likes, number of comments, as well
+        as the comments in descending order.
+
+        Args:
+            blog_post: The db.Model BlogPost
+
+        Returns:
+            None
+        """
         comments = blog_post.comments.order("-created")
 
         self.render("view_post.html", post=blog_post, user=self.user,
@@ -213,6 +225,15 @@ class ViewPost(Handler):
                     comments=comments)
 
     def post_comment(self, blog_post):
+        """Posts a comment.
+
+        Args:
+            blog_post: The db.Model BlogPost
+
+        Returns:
+            None
+        """
+
         if not blog_post.can_like_or_comment(self.user):
             self.error(404)
             self.response.out.write("Authors are not allowed to comment!")
@@ -238,6 +259,15 @@ class ViewPost(Handler):
         self.redirect("/blog/%d" % post_id)
 
     def post(self, post_id):
+        """Creates a new comment or like.
+
+        Args:
+            post_id: The id for the blog post.
+
+        Returns:
+            None
+        """
+
         blog_post = model.BlogPost.get_by_id(int(post_id))
 
         if self.request.get("form_name") == "like":
@@ -250,7 +280,7 @@ class ViewPost(Handler):
 
 
 class NewPost(Handler):
-    """Handles creating a single post.
+    """Handles creating a new post.
     """
     def render_post(self, subject="", content="", error="", title="new post"):
         self.render("post_form.html", subject=subject, content=content, error=error, user=self.user, title=title)
