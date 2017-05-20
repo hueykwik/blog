@@ -96,8 +96,12 @@ class Handler(webapp2.RequestHandler):
             self.response.out.write("Authors are not allowed to like")
             return
 
-        like = model.Like(voter=self.user, post=blog_post)
-        like.put()
+        if blog_post.has_liked(self.user):
+            likes = [like for like in blog_post.likes if like.voter.key().id() == self.user.key().id()]
+            db.delete(likes)
+        else:
+            like = model.Like(voter=self.user, post=blog_post)
+            like.put()
 
         self.like_done(blog_post.key().id())
 
