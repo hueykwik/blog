@@ -1,5 +1,7 @@
 <span class="user">
+
   {% if user %}
+    <a href="/blog/newpost" class="newpost">New Story</a>
     {{user.username}} <a href="/logout">Logout</a>
   {% else %}
     <a href="/login">Login</a>
