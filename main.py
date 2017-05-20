@@ -83,7 +83,7 @@ def render_str(template, **params):
 
     Args:
         template: The string filename of the template.
-        params: Keyword parameters used in the template.
+        **params: Keyword parameters used in the template.
 
     Returns:
         A string rendering of the template with the parameters.
