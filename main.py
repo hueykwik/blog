@@ -221,10 +221,25 @@ class EditComment(Handler):
     """Handles editing a comment.
     """
     def get(self, post_id, comment_id):
-        pass
+        comment = model.Comment.get_by_id(int(comment_id))
+        self.render("comment_form.html", comment=comment.text, user=self.user)
 
     def post(self, post_id, comment_id):
-        pass
+        comment = model.Comment.get_by_id(int(comment_id))
+
+        comment_text = self.request.get("comment")
+
+        if comment_text:
+            comment.text = comment_text
+            comment.put()
+        else:
+            error = "comment cannot be blank"
+            self.render("comment_form.html", user=self.user,
+                        comment=comment_text, error=error)
+
+
+        self.redirect("/blog/%d" % int(post_id))
+
 
 class DeletePost(Handler):
     """Handles deleting a post.

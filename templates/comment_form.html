@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block user_login %}
+  {% include 'user_login.html' %}
+{% endblock %}
+
+{% block content %}
+  <h2>edit comment</h2>
+    <form method="post">
+    <textarea name="comment">{{comment}}</textarea>
+    <br>
+
+    {% if error %}
+    <p class="error">{{error}}</p>
+    {% endif %}
+
+    <input type="submit"></input>
+  </form>
+
+{% endblock %}
