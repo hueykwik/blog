@@ -415,6 +415,7 @@ app = webapp2.WSGIApplication([
     (r'/blog/(\d+)/edit', EditPost),
     (r'/blog/(\d+)/delete', DeletePost),
     (r'/blog/(\d+)/(\d+)/delete', DeleteComment),
+    (r'/blog/(\d+)/(\d+)/edit', EditComment),
     (r'/blog/(\d+)', ViewPost),
     ('/signup', Signup),
     ('/welcome', Welcome),
