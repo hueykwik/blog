@@ -35,14 +35,41 @@ jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
 
 
 def hash_str(s):
+    """Creates a hash of the string s.
+
+    Args:
+        s: An input string.
+
+    Returns:
+        A hash of the input string.
+    """
     return hmac.new(SECRET, s).hexdigest()
 
 
 def make_secure_val(s):
+    """Given an input string, outputs a secure value, i.e. the string followed
+    by a pipe followed by a hash of that string.
+
+    Args:
+        s: An input string
+
+    Returns:
+        A string of the form "s|hash_str(s)".
+    """
     return "%s|%s" % (s, hash_str(s))
 
 
 def check_secure_val(h):
+    """Given a secure value of the form "s|h(s)", checks that h(s) actually
+    matches hash_str(s).
+
+
+    Args:
+        h: A string, expected to be of the form "s|h(s)"
+
+    Returns:
+        True if s == h(s), False otherwise.
+    """
     if not h:
         return None
 
