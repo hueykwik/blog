@@ -216,6 +216,16 @@ class DeleteComment(Handler):
 
         self.redirect("/blog/%d" % int(post_id))
 
+
+class EditComment(Handler):
+    """Handles editing a comment.
+    """
+    def get(self, post_id, comment_id):
+        pass
+
+    def post(self, post_id, comment_id):
+        pass
+
 class DeletePost(Handler):
     """Handles deleting a post.
     """
