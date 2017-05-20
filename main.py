@@ -205,6 +205,19 @@ class NewPost(Handler):
             self.render_post(subject, content, error)
 
 
+class DeletePost(Handler):
+    """Handles deleting a post.
+    """
+    def get(self, post_id):
+        blog_post = model.BlogPost.get_by_id(int(post_id))
+
+        if blog_post:
+            blog_post.delete()
+
+        self.redirect("/blog")
+
+
+
 class EditPost(NewPost):
     """Handles editing a post.
     """
@@ -231,6 +244,7 @@ class EditPost(NewPost):
         else:
             error = "subject and content, please!"
             self.render_post(subject, content, error)
+
 
 
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
@@ -378,6 +392,7 @@ app = webapp2.WSGIApplication([
     ('/blog/?', FrontPage),
     ('/blog/newpost', NewPost),
     (r'/blog/(\d+)/edit', EditPost),
+    (r'/blog/(\d+)/delete', DeletePost),
     (r'/blog/(\d+)', ViewPost),
     ('/signup', Signup),
     ('/welcome', Welcome),

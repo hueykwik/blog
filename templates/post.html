@@ -8,6 +8,7 @@
       {{post.created.strftime("%b %d")}}
       {% if user and (post.author.username == user.username) %}
         · <a href="/blog/{{post.key().id()}}/edit">Edit</a>
+        · <a href="/blog/{{post.key().id()}}/delete">Delete</a>
       {% endif %}
     </div>
   </div>
