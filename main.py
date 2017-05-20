@@ -79,6 +79,15 @@ def check_secure_val(h):
 
 
 def render_str(template, **params):
+    """Renders a template with associated parameters.
+
+    Args:
+        template: The string filename of the template.
+        params: Keyword parameters used in the template.
+
+    Returns:
+        A string rendering of the template with the parameters.
+    """
     t = jinja_env.get_template(template)
     return t.render(params)
 
@@ -114,7 +123,13 @@ class Handler(webapp2.RequestHandler):
         self.response.headers.add_header('Set-Cookie', 'user_id=; Path=/')
 
     def like_done(self, post_id=None):
-        """Called when handle_like is finished persisting the Like.
+        """Called when the user "like" action is completed.
+
+        Args:
+            post_id: Optional id for the associated blog post.
+
+        Returns:
+            Nothing, but it is expected that subclasses will redirect.
         """
         raise NotImplementedError
 
