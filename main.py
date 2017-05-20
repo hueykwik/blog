@@ -205,6 +205,17 @@ class NewPost(Handler):
             self.render_post(subject, content, error)
 
 
+class DeleteComment(Handler):
+    """Handles deleting a comment.
+    """
+    def get(self, post_id, comment_id):
+        comment = model.Comment.get_by_id(int(comment_id))
+
+        if comment:
+            comment.delete()
+
+        self.redirect("/blog/%d" % int(post_id))
+
 class DeletePost(Handler):
     """Handles deleting a post.
     """
@@ -393,6 +404,7 @@ app = webapp2.WSGIApplication([
     ('/blog/newpost', NewPost),
     (r'/blog/(\d+)/edit', EditPost),
     (r'/blog/(\d+)/delete', DeletePost),
+    (r'/blog/(\d+)/(\d+)/delete', DeleteComment),
     (r'/blog/(\d+)', ViewPost),
     ('/signup', Signup),
     ('/welcome', Welcome),
