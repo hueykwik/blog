@@ -249,6 +249,7 @@ class NewPost(Handler):
 class DeleteComment(Handler):
     """Handles deleting a comment.
     """
+    @login_required
     def get(self, post_id, comment_id):
         comment = model.Comment.get_by_id(int(comment_id))
 
