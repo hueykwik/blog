@@ -169,7 +169,7 @@ class AddComment(Handler):
 
 
 class Like(Handler):
-    """Handles ading a single like.
+    """Handles toggling a single like.
     """
     def post(self, post_id, front=None):
         blog_post = model.BlogPost.get_by_id(int(post_id))
