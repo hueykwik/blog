@@ -153,6 +153,30 @@ class FrontPage(Handler):
         self.redirect("/blog")
 
 
+class AddComment(Handler):
+    """Handles adding a single comment.
+    """
+    def post(self, post_id):
+        blog_post = model.BlogPost.get_by_id(int(post_id))
+
+        if not blog_post.can_like_or_comment(self.user):
+            self.error(404)
+            self.response.out.write("Authors are not allowed to comment!")
+            return
+
+        comment_text = self.request.get("comment")
+
+        if comment_text:
+            comment = model.Comment(text=comment_text, author=self.user, post=blog_post)
+            comment.put()
+
+            self.redirect("/blog/%d" % blog_post.key().id())
+        else:
+            error = "comments cannot be blank"
+            self.render("view_post.html", post=blog_post, user=self.user,
+                        can_comment=True, error=error)
+
+
 class ViewPost(Handler):
     """Handles viewing a single post.
     """
@@ -185,7 +209,6 @@ class ViewPost(Handler):
         Returns:
             None
         """
-
         if not blog_post.can_like_or_comment(self.user):
             self.error(404)
             self.response.out.write("Authors are not allowed to comment!")
@@ -461,6 +484,7 @@ app = webapp2.WSGIApplication([
     ('/blog/newpost', NewPost),
     (r'/blog/(\d+)/edit', EditPost),
     (r'/blog/(\d+)/delete', DeletePost),
+    (r'/blog/(\d+)/add_comment', AddComment),
     (r'/blog/(\d+)/(\d+)/delete', DeleteComment),
     (r'/blog/(\d+)/(\d+)/edit', EditComment),
     (r'/blog/(\d+)', ViewPost),
