@@ -93,40 +93,6 @@ class Handler(webapp2.RequestHandler):
     def logout(self):
         self.response.headers.add_header('Set-Cookie', 'user_id=; Path=/')
 
-    def like_done(self, post_id=None):
-        """Called when the user "like" action is completed.
-
-        Args:
-            post_id: Optional id for the associated blog post.
-
-        Returns:
-            Nothing, but it is expected that subclasses will redirect.
-        """
-        raise NotImplementedError
-
-    def handle_like(self, blog_post, front=None):
-        """Adds or removes a "like" for a given blog_post.
-
-        Args:
-            blog_post: The db.Model BlogPost
-
-        Returns:
-            No return value, but expected that subclasses implement
-            `Handler.like_done()` to handle redirects.
-        """
-        if not blog_post.can_like_or_comment(self.user):
-            self.response.out.write("Authors are not allowed to like")
-            return
-
-        if blog_post.has_liked(self.user):
-            likes = [like for like in blog_post.likes if like.voter.key().id() == self.user.key().id()]
-            db.delete(likes)
-        else:
-            like = model.Like(voter=self.user, post=blog_post)
-            like.put()
-
-        self.like_done(blog_post.key().id(), front)
-
     def initialize(self, *a, **kw):
         webapp2.RequestHandler.initialize(self, *a, **kw)
         uid = self.read_secure_cookie('user_id')
@@ -171,12 +137,44 @@ class AddComment(Handler):
 class Like(Handler):
     """Handles toggling a single like.
     """
+
+    def handle_like(self, blog_post, front=None):
+        """Adds or removes a "like" for a given blog_post.
+
+        Args:
+            blog_post: The db.Model BlogPost
+
+        Returns:
+            No return value, but expected that subclasses implement
+            `Handler.like_done()` to handle redirects.
+        """
+        if not blog_post.can_like_or_comment(self.user):
+            self.response.out.write("Authors are not allowed to like")
+            return
+
+        if blog_post.has_liked(self.user):
+            likes = [like for like in blog_post.likes if like.voter.key().id() == self.user.key().id()]
+            db.delete(likes)
+        else:
+            like = model.Like(voter=self.user, post=blog_post)
+            like.put()
+
+        self.like_done(blog_post.key().id(), front)
+
     def post(self, post_id, front=None):
         blog_post = model.BlogPost.get_by_id(int(post_id))
 
         self.handle_like(blog_post, front)
 
     def like_done(self, post_id, front=None):
+        """Called when the user "like" action is completed.
+
+        Args:
+            post_id: Optional id for the associated blog post.
+
+        Returns:
+            Nothing, expected to redirect.
+        """
         if front:
             self.redirect("/blog")
         else:
