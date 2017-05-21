@@ -337,7 +337,6 @@ class EditComment(Handler):
             self.render("comment_form.html", user=self.user,
                         comment=comment_text, error=error)
 
-
         self.redirect("/blog/%d" % int(post_id))
 
 
