@@ -311,11 +311,6 @@ class EditPost(NewPost):
             self.render_post(subject, content, error)
 
 
-USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
-PASSWORD_RE = re.compile(r"^.{3,20}$")
-EMAIL_RE = re.compile(r"^[\S]+@[\S]+.[\S]+$")
-
-
 def get_user(username):
     users = db.GqlQuery("select * from User where username = '%s'" % username)
 
@@ -329,14 +324,18 @@ def user_cookie_string(user):
 class Signup(Handler):
     """Handles user signup requests.
     """
+    USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
+    PASSWORD_RE = re.compile(r"^.{3,20}$")
+    EMAIL_RE = re.compile(r"^[\S]+@[\S]+.[\S]+$")
+
     def valid_username(self, username):
-        return USER_RE.match(username)
+        return self.USER_RE.match(username)
 
     def valid_password(self, password):
-        return PASSWORD_RE.match(password)
+        return self.PASSWORD_RE.match(password)
 
     def valid_email(self, email):
-        return not email or EMAIL_RE.match(email)
+        return not email or self.EMAIL_RE.match(email)
 
     def get(self):
         self.render('signup.html')
