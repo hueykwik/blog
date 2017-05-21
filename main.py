@@ -143,16 +143,6 @@ class FrontPage(Handler):
         self.render("front.html", blog_posts=blog_posts, user=self.user,
                     front="front")
 
-    def post(self):
-        post_id = self.request.get("post_id")
-        blog_post = model.BlogPost.get_by_id(int(post_id))
-
-        if blog_post:
-            self.handle_like(blog_post)
-
-    def like_done(self, post_id=None, front=None):
-        self.redirect("/blog")
-
 
 class AddComment(Handler):
     """Handles adding a single comment.
@@ -178,7 +168,7 @@ class AddComment(Handler):
                         can_comment=True, error=error)
 
 
-class AddLike(Handler):
+class Like(Handler):
     """Handles ading a single like.
     """
     def post(self, post_id, front=None):
@@ -452,7 +442,7 @@ app = webapp2.WSGIApplication([
     (r'/blog/(\d+)/edit', EditPost),
     (r'/blog/(\d+)/delete', DeletePost),
     (r'/blog/(\d+)/add_comment', AddComment),
-    (r'/blog/(\d+)/add_like(/front)?', AddLike),
+    (r'/blog/(\d+)/like(/front)?', Like),
     (r'/blog/(\d+)/(\d+)/delete', DeleteComment),
     (r'/blog/(\d+)/(\d+)/edit', EditComment),
     (r'/blog/(\d+)', ViewPost),

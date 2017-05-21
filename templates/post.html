@@ -20,9 +20,9 @@
   <div class="post-footer">
     <ul class="post-footer-nav">
       {% if front %}
-      <form method="post" action="/blog/{{post.key().id()}}/add_like/front">
+      <form method="post" action="/blog/{{post.key().id()}}/like/front">
       {% else %}
-      <form method="post" action="/blog/{{post.key().id()}}/add_like">
+      <form method="post" action="/blog/{{post.key().id()}}/like">
       {% endif %}
         <input type="hidden" name="post_id" value="{{post.key().id()}}"></input>
         <li>
