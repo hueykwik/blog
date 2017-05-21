@@ -352,7 +352,6 @@ class DeletePost(Handler):
         self.redirect("/blog")
 
 
-
 class EditPost(NewPost):
     """Handles editing a post.
     """
@@ -379,7 +378,6 @@ class EditPost(NewPost):
         else:
             error = "subject and content, please!"
             self.render_post(subject, content, error)
-
 
 
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
