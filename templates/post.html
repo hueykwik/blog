@@ -20,7 +20,6 @@
   <div class="post-footer">
     <ul class="post-footer-nav">
       <form method="post" action="/blog/{{post.key().id()}}/add_like">
-        <input type="hidden" name="form_name" value="like"></input>
         <input type="hidden" name="post_id" value="{{post.key().id()}}"></input>
         <li>
           <button class="like" {{'disabled' if not post.can_like_or_comment(user)}}>

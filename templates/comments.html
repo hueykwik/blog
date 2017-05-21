@@ -2,7 +2,6 @@
 
   {% if can_comment %}
   <form method="post" action="/blog/{{post.key().id()}}/add_comment">
-    <input type="hidden" name="form_name" value="comment"></input>
     <textarea name="comment" class="comment" placeholder="Write a comment..."></textarea>
     <br>
     <input type="submit" class="publish" value="Publish"></input>
