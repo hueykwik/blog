@@ -200,32 +200,6 @@ class ViewPost(Handler):
                     can_comment=blog_post.can_like_or_comment(self.user),
                     comments=comments)
 
-    def post_comment(self, blog_post):
-        """Posts a comment.
-
-        Args:
-            blog_post: The db.Model BlogPost
-
-        Returns:
-            None
-        """
-        if not blog_post.can_like_or_comment(self.user):
-            self.error(404)
-            self.response.out.write("Authors are not allowed to comment!")
-            return
-
-        comment_text = self.request.get("comment")
-
-        if comment_text:
-            comment = model.Comment(text=comment_text, author=self.user, post=blog_post)
-            comment.put()
-
-            self.redirect("/blog/%d" % blog_post.key().id())
-        else:
-            error = "comments cannot be blank"
-            self.render("view_post.html", post=blog_post, user=self.user,
-                        can_comment=True, error=error)
-
     def get(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
         self.render_post(blog_post)
@@ -247,9 +221,6 @@ class ViewPost(Handler):
 
         if self.request.get("form_name") == "like":
             self.handle_like(blog_post)
-        elif self.request.get("form_name") == "comment":
-            self.post_comment(blog_post)
-
         else:
             self.redirect("/blog/%d" % blog_post.key().id())
 
