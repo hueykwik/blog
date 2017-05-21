@@ -262,10 +262,12 @@ class DeleteComment(Handler):
 class EditComment(Handler):
     """Handles editing a comment.
     """
+    @login_required
     def get(self, post_id, comment_id):
         comment = model.Comment.get_by_id(int(comment_id))
         self.render("comment_form.html", comment=comment.text, user=self.user)
 
+    @login_required
     def post(self, post_id, comment_id):
         comment = model.Comment.get_by_id(int(comment_id))
 
@@ -285,6 +287,7 @@ class EditComment(Handler):
 class DeletePost(Handler):
     """Handles deleting a post.
     """
+    @login_required
     def get(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
 
@@ -297,6 +300,7 @@ class DeletePost(Handler):
 class EditPost(NewPost):
     """Handles editing a post.
     """
+    @login_required
     def get(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
 
@@ -305,6 +309,7 @@ class EditPost(NewPost):
 
         self.render_post(subject=blog_post.subject, content=blog_post.content, title="edit post", post_id=post_id)
 
+    @login_required
     def post(self, post_id):
         subject = self.request.get("subject")
         content = self.request.get("content")
