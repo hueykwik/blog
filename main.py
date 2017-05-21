@@ -30,6 +30,20 @@ jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
                                autoescape=True)
 
 
+def post_exists(func):
+    """A decorator to confirm
+    """
+    def post_exists(self, post_id, *args, **kwargs):
+        blog_post = model.BlogPost.get_by_id(int(post_id))
+        if blog_post is None:
+            self.error(404)
+            self.response.out.write("Post does not exist.")
+        else:
+            func(self, post_id, *args, **kwargs)
+
+    return post_exists
+
+
 def login_required(func):
     """A decorator to confirm a user is logged in or redirect as needed.
     """
@@ -125,6 +139,7 @@ class FrontPage(Handler):
 class AddComment(Handler):
     """Handles adding a single comment.
     """
+    @post_exists
     def post(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
 
@@ -173,6 +188,7 @@ class Like(Handler):
 
         self.like_done(blog_post.key().id(), front)
 
+    @post_exists
     def post(self, post_id, front=None):
         blog_post = model.BlogPost.get_by_id(int(post_id))
 
@@ -216,6 +232,7 @@ class ViewPost(Handler):
                     can_comment=blog_post.can_like_or_comment(self.user),
                     comments=comments)
 
+    @post_exists
     def get(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
         self.render_post(blog_post)
@@ -250,6 +267,7 @@ class DeleteComment(Handler):
     """Handles deleting a comment.
     """
     @login_required
+    @post_exists
     def get(self, post_id, comment_id):
         comment = model.Comment.get_by_id(int(comment_id))
 
@@ -263,11 +281,13 @@ class EditComment(Handler):
     """Handles editing a comment.
     """
     @login_required
+    @post_exists
     def get(self, post_id, comment_id):
         comment = model.Comment.get_by_id(int(comment_id))
         self.render("comment_form.html", comment=comment.text, user=self.user)
 
     @login_required
+    @post_exists
     def post(self, post_id, comment_id):
         comment = model.Comment.get_by_id(int(comment_id))
 
@@ -288,6 +308,7 @@ class DeletePost(Handler):
     """Handles deleting a post.
     """
     @login_required
+    @post_exists
     def get(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
 
@@ -301,6 +322,7 @@ class EditPost(NewPost):
     """Handles editing a post.
     """
     @login_required
+    @post_exists
     def get(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
 
@@ -310,6 +332,7 @@ class EditPost(NewPost):
         self.render_post(subject=blog_post.subject, content=blog_post.content, title="edit post", post_id=post_id)
 
     @login_required
+    @post_exists
     def post(self, post_id):
         subject = self.request.get("subject")
         content = self.request.get("content")
