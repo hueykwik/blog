@@ -282,8 +282,9 @@ class ViewPost(Handler):
 class NewPost(Handler):
     """Handles creating a new post.
     """
-    def render_post(self, subject="", content="", error="", title="new post"):
-        self.render("post_form.html", subject=subject, content=content, error=error, user=self.user, title=title)
+    def render_post(self, subject="", content="", error="",
+                    title="new post", post_id=""):
+        self.render("post_form.html", subject=subject, content=content, error=error, user=self.user, title=title, post_id=post_id)
 
     def get(self):
         if self.user:
@@ -361,7 +362,7 @@ class EditPost(NewPost):
         if blog_post.author.key().id() != self.user.key().id():
             self.redirect("/blog/%d" % blog_post.key().id())
 
-        self.render_post(subject=blog_post.subject, content=blog_post.content, title="edit post")
+        self.render_post(subject=blog_post.subject, content=blog_post.content, title="edit post", post_id=post_id)
 
     def post(self, post_id):
         subject = self.request.get("subject")

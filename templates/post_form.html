@@ -20,6 +20,9 @@
     {% endif %}
 
     <input type="submit"></input>
+    {% if post_id %}
+    <input type="button" value="Cancel" onclick="window.location.href='/blog/5066549580791808'"></input>
+    {% endif %}
   </form>
 
 {% endblock %}
