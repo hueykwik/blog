@@ -181,7 +181,10 @@ class Like(Handler):
             return
 
         if blog_post.has_liked(self.user):
-            likes = [like for like in blog_post.likes if like.voter.key().id() == self.user.key().id()]
+            likes = [like for like
+                     in blog_post.likes
+                     if like.voter.key().id() == self.user.key().id()]
+
             db.delete(likes)
         else:
             like = model.Like(voter=self.user, post=blog_post)
