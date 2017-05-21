@@ -30,6 +30,18 @@ jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
                                autoescape=True)
 
 
+def login_required(func):
+    """A decorator to confirm a user is logged in or redirect as needed.
+    """
+    def login(self, *args, **kwargs):
+        # Redirect to login if user not logged in, else execute func.
+        if not self.user:
+            self.redirect("/login")
+        else:
+            func(self, *args, **kwargs)
+    return login
+
+
 def render_str(template, **params):
     """Renders a template with associated parameters.
 
@@ -216,11 +228,9 @@ class NewPost(Handler):
                     title="new post", post_id=""):
         self.render("post_form.html", subject=subject, content=content, error=error, user=self.user, title=title, post_id=post_id)
 
+    @login_required
     def get(self):
-        if self.user:
-            self.render_post()
-        else:
-            self.redirect("/login")
+        self.render_post()
 
     def post(self):
         subject = self.request.get("subject")
