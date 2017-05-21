@@ -104,7 +104,7 @@ class Handler(webapp2.RequestHandler):
         """
         raise NotImplementedError
 
-    def handle_like(self, blog_post):
+    def handle_like(self, blog_post, front=None):
         """Adds or removes a "like" for a given blog_post.
 
         Args:
@@ -125,7 +125,7 @@ class Handler(webapp2.RequestHandler):
             like = model.Like(voter=self.user, post=blog_post)
             like.put()
 
-        self.like_done(blog_post.key().id())
+        self.like_done(blog_post.key().id(), front)
 
     def initialize(self, *a, **kw):
         webapp2.RequestHandler.initialize(self, *a, **kw)
@@ -140,7 +140,8 @@ class FrontPage(Handler):
         blog_posts = db.GqlQuery("SELECT * FROM BlogPost "
                                  "ORDER BY created DESC ")
 
-        self.render("front.html", blog_posts=blog_posts, user=self.user)
+        self.render("front.html", blog_posts=blog_posts, user=self.user,
+                    front="front")
 
     def post(self):
         post_id = self.request.get("post_id")
@@ -149,7 +150,7 @@ class FrontPage(Handler):
         if blog_post:
             self.handle_like(blog_post)
 
-    def like_done(self, post_id=None):
+    def like_done(self, post_id=None, front=None):
         self.redirect("/blog")
 
 
@@ -180,13 +181,16 @@ class AddComment(Handler):
 class AddLike(Handler):
     """Handles ading a single like.
     """
-    def post(self, post_id):
+    def post(self, post_id, front=None):
         blog_post = model.BlogPost.get_by_id(int(post_id))
 
-        self.handle_like(blog_post)
+        self.handle_like(blog_post, front)
 
-    def like_done(self, post_id):
-        self.redirect("/blog/%d" % post_id)
+    def like_done(self, post_id, front=None):
+        if front:
+            self.redirect("/blog")
+        else:
+            self.redirect("/blog/%d" % post_id)
 
 
 class ViewPost(Handler):
@@ -448,7 +452,7 @@ app = webapp2.WSGIApplication([
     (r'/blog/(\d+)/edit', EditPost),
     (r'/blog/(\d+)/delete', DeletePost),
     (r'/blog/(\d+)/add_comment', AddComment),
-    (r'/blog/(\d+)/add_like', AddLike),
+    (r'/blog/(\d+)/add_like(/front)?', AddLike),
     (r'/blog/(\d+)/(\d+)/delete', DeleteComment),
     (r'/blog/(\d+)/(\d+)/edit', EditComment),
     (r'/blog/(\d+)', ViewPost),
