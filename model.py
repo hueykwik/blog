@@ -13,6 +13,10 @@ class User(db.Model):
     hash_password = db.StringProperty(required=True)
     email = db.EmailProperty()
 
+    @classmethod
+    def get_by_name(cls, name):
+        return User.all().filter("username = ", name).get()
+
 
 class BlogPost(db.Model):
     """Models a blog post.

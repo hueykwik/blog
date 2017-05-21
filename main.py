@@ -151,7 +151,8 @@ class AddComment(Handler):
         comment_text = self.request.get("comment")
 
         if comment_text:
-            comment = model.Comment(text=comment_text, author=self.user, post=blog_post)
+            comment = model.Comment(text=comment_text, author=self.user,
+                                    post=blog_post)
             comment.put()
 
             self.redirect("/blog/%d" % blog_post.key().id())
@@ -243,7 +244,8 @@ class NewPost(Handler):
     """
     def render_post(self, subject="", content="", error="",
                     title="new post", post_id=""):
-        self.render("post_form.html", subject=subject, content=content, error=error, user=self.user, title=title, post_id=post_id)
+        self.render("post_form.html", subject=subject, content=content,
+                    error=error, user=self.user, title=title, post_id=post_id)
 
     @login_required
     def get(self):
@@ -254,7 +256,8 @@ class NewPost(Handler):
         content = self.request.get("content")
 
         if subject and content:
-            blog_post = model.BlogPost(subject=subject, content=content, author=self.user)
+            blog_post = model.BlogPost(subject=subject, content=content,
+                                       author=self.user)
             blog_post.put()
 
             self.redirect("/blog/%d" % blog_post.key().id())
@@ -329,7 +332,8 @@ class EditPost(NewPost):
         if blog_post.author.key().id() != self.user.key().id():
             self.redirect("/blog/%d" % blog_post.key().id())
 
-        self.render_post(subject=blog_post.subject, content=blog_post.content, title="edit post", post_id=post_id)
+        self.render_post(subject=blog_post.subject, content=blog_post.content,
+                         title="edit post", post_id=post_id)
 
     @login_required
     @post_exists
@@ -357,7 +361,8 @@ def get_user(username):
 
 
 def user_cookie_string(user):
-    return "user_id=%s; Path=/" % hash_utils.make_secure_val(str(user.key().id()))
+    return ("user_id=%s; Path=/"
+            % hash_utils.make_secure_val(str(user.key().id())))
 
 
 class Signup(Handler):
@@ -444,8 +449,7 @@ class Login(Handler):
     """
     def check_password(self, username, password):
         # Assume that username exists in DB.
-        query = db.GqlQuery("select * from User where username = '%s'" % username)
-        user = query.get()
+        user = model.User.get_by_name(username)
 
         return hash_utils.valid_pw(username, password, user.hash_password)
 
