@@ -177,6 +177,18 @@ class AddComment(Handler):
                         can_comment=True, error=error)
 
 
+class AddLike(Handler):
+    """Handles ading a single like.
+    """
+    def post(self, post_id):
+        blog_post = model.BlogPost.get_by_id(int(post_id))
+
+        self.handle_like(blog_post)
+
+    def like_done(self, post_id):
+        self.redirect("/blog/%d" % post_id)
+
+
 class ViewPost(Handler):
     """Handles viewing a single post.
     """
@@ -203,26 +215,6 @@ class ViewPost(Handler):
     def get(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
         self.render_post(blog_post)
-
-    def like_done(self, post_id):
-        self.redirect("/blog/%d" % post_id)
-
-    def post(self, post_id):
-        """Creates a new comment or like.
-
-        Args:
-            post_id: The id for the blog post.
-
-        Returns:
-            None
-        """
-
-        blog_post = model.BlogPost.get_by_id(int(post_id))
-
-        if self.request.get("form_name") == "like":
-            self.handle_like(blog_post)
-        else:
-            self.redirect("/blog/%d" % blog_post.key().id())
 
 
 class NewPost(Handler):
@@ -456,6 +448,7 @@ app = webapp2.WSGIApplication([
     (r'/blog/(\d+)/edit', EditPost),
     (r'/blog/(\d+)/delete', DeletePost),
     (r'/blog/(\d+)/add_comment', AddComment),
+    (r'/blog/(\d+)/add_like', AddLike),
     (r'/blog/(\d+)/(\d+)/delete', DeleteComment),
     (r'/blog/(\d+)/(\d+)/edit', EditComment),
     (r'/blog/(\d+)', ViewPost),
