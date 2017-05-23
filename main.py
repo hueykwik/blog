@@ -254,6 +254,7 @@ class NewPost(Handler):
     def get(self):
         self.render_post()
 
+    @login_required
     def post(self):
         subject = self.request.get("subject")
         content = self.request.get("content")
