@@ -31,7 +31,7 @@ jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
 
 
 def post_exists(func):
-    """A decorator to confirm
+    """A decorator to confirm that a post exists.
     """
     def post_exists(self, post_id, *args, **kwargs):
         blog_post = model.BlogPost.get_by_id(int(post_id))
