@@ -56,6 +56,21 @@ def login_required(func):
     return login
 
 
+def user_wrote_comment(func):
+    """A decorator to confirm a user is the author of a given comment.
+    """
+    def user_wrote_comment(self, post_id, comment_id, *args, **kwargs):
+        comment = model.Comment.get_by_id(int(comment_id))
+
+        if comment.author.key().id() != self.user.key().id():
+            self.error(404)
+            self.response.out.write("Only author can edit/delete a comment.")
+        else:
+            func(self, post_id, comment_id, *args, **kwargs)
+
+    return user_wrote_comment
+
+
 def render_str(template, **params):
     """Renders a template with associated parameters.
 
@@ -275,6 +290,7 @@ class DeleteComment(Handler):
     """
     @login_required
     @post_exists
+    @user_wrote_comment
     def get(self, post_id, comment_id):
         comment = model.Comment.get_by_id(int(comment_id))
 
@@ -289,12 +305,14 @@ class EditComment(Handler):
     """
     @login_required
     @post_exists
+    @user_wrote_comment
     def get(self, post_id, comment_id):
         comment = model.Comment.get_by_id(int(comment_id))
         self.render("comment_form.html", comment=comment.text, user=self.user)
 
     @login_required
     @post_exists
+    @user_wrote_comment
     def post(self, post_id, comment_id):
         comment = model.Comment.get_by_id(int(comment_id))
 
