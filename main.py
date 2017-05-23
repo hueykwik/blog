@@ -43,6 +43,19 @@ def post_exists(func):
 
     return post_exists
 
+def comment_exists(func):
+    """A decorator to confirm that a comment exists.
+    """
+    def comment_exists(self, post_id, comment_id, *args, **kwargs):
+        comment = model.Comment.get_by_id(int(comment_id))
+        if comment is None:
+            self.error(404)
+            self.response.out.write("Comment does not exist.")
+        else:
+            func(self, post_id, comment_id, *args, **kwargs)
+
+    return comment_exists
+
 
 def login_required(func):
     """A decorator to confirm a user is logged in or redirect as needed.
@@ -305,6 +318,7 @@ class DeleteComment(Handler):
     """
     @login_required
     @post_exists
+    @comment_exists
     @user_wrote_comment
     def get(self, post_id, comment_id):
         comment = model.Comment.get_by_id(int(comment_id))
@@ -320,6 +334,7 @@ class EditComment(Handler):
     """
     @login_required
     @post_exists
+    @comment_exists
     @user_wrote_comment
     def get(self, post_id, comment_id):
         comment = model.Comment.get_by_id(int(comment_id))
@@ -327,6 +342,7 @@ class EditComment(Handler):
 
     @login_required
     @post_exists
+    @comment_exists
     @user_wrote_comment
     def post(self, post_id, comment_id):
         comment = model.Comment.get_by_id(int(comment_id))
