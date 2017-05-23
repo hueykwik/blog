@@ -56,6 +56,21 @@ def login_required(func):
     return login
 
 
+def user_wrote_post(func):
+    """A decorator to confirm a user is the author of a given post.
+    """
+    def user_wrote_post(self, post_id, *args, **kwargs):
+        blog_post = model.BlogPost.get_by_id(int(post_id))
+
+        if blog_post.author.key().id() != self.user.key().id():
+            self.error(404)
+            self.response.out.write("Only author can edit/delete a post.")
+        else:
+            func(self, post_id, *args, **kwargs)
+
+    return user_wrote_post
+
+
 def user_wrote_comment(func):
     """A decorator to confirm a user is the author of a given comment.
     """
@@ -334,6 +349,7 @@ class DeletePost(Handler):
     """
     @login_required
     @post_exists
+    @user_wrote_post
     def get(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
 
@@ -348,6 +364,7 @@ class EditPost(NewPost):
     """
     @login_required
     @post_exists
+    @user_wrote_post
     def get(self, post_id):
         blog_post = model.BlogPost.get_by_id(int(post_id))
 
@@ -359,6 +376,7 @@ class EditPost(NewPost):
 
     @login_required
     @post_exists
+    @user_wrote_post
     def post(self, post_id):
         subject = self.request.get("subject")
         content = self.request.get("content")
